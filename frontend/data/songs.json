@@ -1,0 +1,28 @@
+[
+  {
+    "id": 1,
+    "title": "Sample Song",
+    "artist": "Artist",
+    "audio": "/audio/sample.mp3",
+    "lyrics": [
+      { "time": 0, "text": "When the lights go down, we start to breathe." },
+      { "time": 5, "text": "Hold the first note, let it settle in the room." },
+      { "time": 10, "text": "Step by step, the rhythm carries every line." },
+      { "time": 15, "text": "Sing it clear, keep your eyes on the story." },
+      { "time": 20, "text": "Take it home with heart and harmony." }
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Midnight Echo",
+    "artist": "Nova Lane",
+    "audio": "/audio/midnight-echo.mp3",
+    "lyrics": [
+      { "time": 0, "text": "Midnight sky and a quiet street below." },
+      { "time": 4, "text": "Echoes of your voice begin to glow." },
+      { "time": 9, "text": "Every verse is floating in the dark." },
+      { "time": 14, "text": "Find the chorus, sing it from the heart." },
+      { "time": 19, "text": "Let it fade, but leave a little spark." }
+    ]
+  }
+]
