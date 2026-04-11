@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
-import "../styles/globals.css";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OBSIDIAN STAGE | Performance Lyrics Teleprompter",
-  description:
-    "The professional lyrics teleprompter designed for stage performance, tactile control, and seamless sync.",
+  title: "OBSIDIAN STAGE | Player",
+  description: "Performance-grade lyrics teleprompter player interface.",
 };
 
 export default function RootLayout({
@@ -14,6 +13,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="dark h-full">
+      <head>
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
+        />
+        <link
+          rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        />
+      </head>
       <body className="min-h-full bg-[#131313] text-[#e5e2e1]">{children}</body>
     </html>
   );
