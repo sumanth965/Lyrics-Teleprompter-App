@@ -1,202 +1,255 @@
 export default function HomePage() {
+  const songs = [
+    {
+      title: "Neon Horizon",
+      artist: "Echoes of Silence",
+      bpm: "128",
+      key: "Am",
+      time: "04:22",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuB49aw64LjMwp7QFoZWBSn9QM_Qw7btChsXE3pK4uqekHo-dfOsfALyHAA5ArKEQSF0m4zoLanZVgVqROvSWX627Cluarh8n-qtRsooVR-dWhXlsyhV13qwcTFf14ufcNUpoEX-H6rLiW0KphM3HBsmEPA017m7GgYJeA07TEbA74wCWfsQwk0GtX-iY4FHSH2348guLCa4due2tZNyYNxRbrbgxev46ZcCuzNi4wT3OeZoJEjbVIaRBuwFClV5bi02PGTHDdad4EJR",
+      alt: "abstract album art featuring vibrant neon green light waves against a textured black background with cinematic depth",
+    },
+    {
+      title: "Obsidian Pulse",
+      artist: "Vortex Theory",
+      bpm: "115",
+      key: "F#m",
+      time: "03:58",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuDz3nA1OsTLuSDuBXJ08myN1hO15go3AJ_LgSMe4cFkxivDBsgYWCmlKrmh1o9YKd_tHomsVb8b9M-sOIB52i8Qk1tNbnkb9-Nev6e6N5h1DedJZoJj1nCMQ8ZcMmPJxpzaHq_VjoDkERROF8Ktq9t5LKnCOdRT3OiyXjoarcikXyWCsa7S6rrZJene57tHRZScQ63FmSkzgbLpEj5_UzeQEAKcYJI5G8fy40tpoybaDIP7N5R_wVUh8wHYTzIZQ89F38jnZ-H1EiiV",
+      alt: "moody high-contrast photo of a DJ console in a dark club with sharp green laser beams piercing through haze",
+    },
+    {
+      title: "Frictionless",
+      artist: "Liquid Glass",
+      bpm: "142",
+      key: "C",
+      time: "05:10",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuAyS7f7vThuHoHHyAsLXKdJI2oMR-bYAZt_GWB8c4Qz3W_pw2x6kEuRzNFyIiwcqcoy2z1WbHWFjuHc7YxSy9VPvEm397tRGCipuf-9hjjqgKnNcs8DV6J4S3B0Iov1omzawcaxIRd8IXRC6bGZBES4mXSEPwe2ih2sFCT72j2CnslmEKMkk_aqDJqh_fBVslRsza9ZvN_PxzgMGq3OGJDU5YFIH2BWyUBTBYNDdrhLeYWaJ64y4hua7RbQGtLviza1FSjhjN2hIe_o",
+      alt: "minimalist photography of a single bright green light bulb glowing in an otherwise pitch black minimalist music studio",
+    },
+    {
+      title: "Midnight Logic",
+      artist: "Quartz Project",
+      bpm: "92",
+      key: "Gm",
+      time: "03:45",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuBoPFWvpSDmElt8cKfPxs3gXqNC011GUXZFlMXIe8NDfFBCFInEa5fpTmPI9rFsfRkxUyIn73NXwWbxUUdYK6bRtj2r1E8RVZibYfgczPeHPDOW2IYAPofMfZrgDxrZ2hWEooXFBnCP2m1oAPJSxDa96zt7TOpO_ttN7-OTAAP5MdpJzGUD2jqzEy9yfOuOKxMpfmIoCyb2hFySObnaX3JT-HZBxu4HYFEJMHDM-MdcWq1_RGgaBIo7HoWLdySR4NxEtHh1jz6vCfvZ",
+      alt: "extreme close-up of a high-end chrome microphone with green reflections from studio lighting and bokeh background",
+    },
+    {
+      title: "Static Void",
+      artist: "The Architects",
+      bpm: "175",
+      key: "Eb",
+      time: "02:31",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuCLWXklFL1kXw9gNqjYWZRckqAfwOVC8fn9NZE-WnDykVntpbkpssq4o-cL0sX2uR0rEH6IEoLTTDnl18srWq9gTk_OfOEBtXbRIQtIwDcU5rs6-wFT1-XQZWABr7Ueolz3rUw_-vrilvMwb5w9tJpn4V7cwu3ljD1ub-zKf8r95H7ynPyCrcu2hk0mfuA2KvNhsJYJ4__Y9gEG-tgqUatbHgJF_55uhsoTw9NMC9x_ySIN-vPDzQa5fLGz_P9s2aZqkfbMUlJn3nrd",
+      alt: "abstract geometric composition with metallic textures and neon green accents in a futuristic architecture style",
+    },
+    {
+      title: "Titanium Echo",
+      artist: "Metalsmith",
+      bpm: "108",
+      key: "Dm",
+      time: "04:15",
+      image:
+        "https://lh3.googleusercontent.com/aida-public/AB6AXuB4fJKsrc-BueTASQAEkPy8kLne2pFQ61kHMUiS2VmEqk_yFRfyXeMIhR8TALXmuZBO0Uv2doHic0QQxZY4gmZHBtTci4GnwEhFsy2EO7AO_aauTqNV52ZJ16pa2BL3wzVH-7JI4Yl2h6Wnd5Ggtv0BHi8MfvPlmp1vhLLjoYo__eLQeijyns3NmBAvNDo2Ct_vrnJnVZDEUTpvslOoXuceOU4ny8Rx9fa730PkbJzVnKMcsBUxHrsahIAVZVSE_oKbk1zKFZIXyH4L",
+      alt: "dramatic wide shot of an empty concert arena stage with green floodlights and thick floor haze",
+    },
+  ];
+
   return (
-    <div className="bg-[#131313] text-[#e5e2e1] selection:bg-[#22c55e]/30">
+    <div className="bg-[#131313] text-[#e5e2e1] selection:bg-[#4be277] selection:text-[#003915]">
       <nav className="fixed top-0 z-50 flex w-full items-center justify-between bg-[#131313]/70 px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-md">
         <div className="text-xl font-black tracking-tighter text-[#22C55E]">OBSIDIAN STAGE</div>
-
         <div className="hidden items-center gap-8 tracking-tight md:flex">
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
-            Library
-          </a>
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
-            Studio
-          </a>
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
-            Settings
-          </a>
+          <a className="border-b-2 border-[#22C55E] pb-1 font-bold text-[#22C55E]" href="#">Library</a>
+          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">Studio</a>
+          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">Settings</a>
         </div>
-
-        <div className="flex items-center gap-4">
-          <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-6 py-2 font-bold text-[#003915] shadow-lg shadow-[#4be277]/20 transition-all duration-200 active:scale-95">
+        <div className="flex items-center gap-6">
+          <div className="relative hidden md:block">
+            <span className="material-symbols-outlined absolute top-1/2 left-3 -translate-y-1/2 text-sm text-[#bccbb9]">search</span>
+            <input
+              className="w-64 rounded-full border-none bg-[#1c1b1b] py-2 pr-4 pl-10 text-sm focus:ring-1 focus:ring-[#4be277]"
+              placeholder="Search track, artist, or BPM..."
+              type="text"
+            />
+          </div>
+          <button className="rounded-xl bg-[#22C55E] px-6 py-2 font-bold text-[#003915] transition-all duration-200 active:scale-95">
             Go Live
           </button>
         </div>
       </nav>
 
-      <main className="pt-24">
-        <section className="relative flex min-h-[921px] items-center justify-center overflow-hidden px-8">
-          <div className="absolute inset-0 z-0">
-            <img
-              className="h-full w-full object-cover opacity-30 mix-blend-overlay"
-              alt="Dramatic wide shot of a music stage with green laser lights through stage smoke"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuB8s8yEQhJ5AXPx1_O5wtW6EED2j1IqBKZIoYoFM57RZNS6-3uhX1-XIWychlOjCl-OA2vGbFeJ-tovCDnScRaizXZC7hS2Y3CidDFUursCCXemzqO-9UPmiuS4kiBP0PqBCh8l5_HIp0NzmFFySwnxPzZGEz7RRjYRVbBjeaA2kmFwFdVP5BLhDLynXR4gWeodkDpUVccQuEeD5NvRft1PCNVSLrzPO8-RypJv4-tJ9Uq_Yde3LQwbojy3ltxXn8yXtBMCxCHyqTKC"
-            />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#131313] via-transparent to-[#131313]/80" />
-          </div>
-
-          <div className="relative z-10 max-w-5xl space-y-8 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[#3d4a3d]/15 bg-[#2a2a2a] px-4 py-2">
-              <span className="h-2 w-2 animate-pulse rounded-full bg-[#4be277]" />
-              <span className="text-[10px] font-medium tracking-[0.05em] uppercase text-[#bccbb9]">
-                Engineered for Performance
-              </span>
-            </div>
-
-            <h1 className="text-glow text-6xl leading-[0.9] font-black tracking-tighter md:text-8xl">
-              NEVER MISS
-              <br />
-              <span className="text-[#4be277]">A BEAT AGAIN.</span>
-            </h1>
-
-            <p className="mx-auto max-w-2xl text-lg leading-relaxed text-[#bccbb9] md:text-xl">
-              The professional lyrics teleprompter designed for the stage. Tactile control, crystal
-              clarity, and seamless device synchronization for the high-pressure environment of live
-              music.
-            </p>
-
-            <div className="flex flex-col justify-center gap-4 pt-4 md:flex-row">
-              <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-10 py-5 text-lg font-extrabold text-[#003915] transition-all hover:shadow-2xl hover:shadow-[#4be277]/40 active:scale-95">
-                Start Singing
-              </button>
-              <button className="rounded-xl bg-[#353534] px-10 py-5 text-lg font-bold text-[#e5e2e1] transition-all hover:bg-[#393939]">
-                View Hardware Sync
-              </button>
-            </div>
-          </div>
-        </section>
-
-        <section className="mx-auto max-w-7xl space-y-8 px-8 py-32">
-          <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-            <div className="group relative col-span-1 flex min-h-[450px] flex-col justify-end overflow-hidden rounded-2xl bg-[#201f1f] p-12 md:col-span-2">
-              <div className="absolute top-0 right-0 p-8">
-                <span className="material-symbols-outlined text-6xl text-[#4be277]/20 transition-colors duration-500 group-hover:text-[#4be277]">
-                  speed
-                </span>
-              </div>
-              <div className="relative z-10 space-y-4">
-                <h3 className="text-4xl font-bold tracking-tight">Smooth Scrolling</h3>
-                <p className="max-w-md text-lg text-[#bccbb9]">
-                  Adaptive speed engine that follows your vocal delivery. Zero latency, infinite
-                  precision.
-                </p>
-                <div className="flex gap-4 pt-4">
-                  <span className="rounded bg-[#2a2a2a] px-3 py-1 text-[10px] font-medium tracking-[0.05em] uppercase text-[#4be277]">
-                    Ultra-Low Jitter
-                  </span>
-                  <span className="rounded bg-[#2a2a2a] px-3 py-1 text-[10px] font-medium tracking-[0.05em] uppercase text-[#4be277]">
-                    60FPS Engine
-                  </span>
-                </div>
-              </div>
-              <div className="absolute right-12 bottom-12 h-2/3 w-1/2 opacity-20 transition-opacity group-hover:opacity-40">
-                <div className="space-y-4 text-3xl font-bold opacity-50">
-                  <div className="text-white">Is this the real life?</div>
-                  <div className="text-[#bccbb9]">Is this just fantasy?</div>
-                  <div className="text-[#bccbb9]/50">Caught in a landslide...</div>
-                </div>
-              </div>
-            </div>
-
-            <div className="group relative flex flex-col gap-6 overflow-hidden rounded-2xl bg-[#201f1f] p-8">
+      <div className="flex h-screen overflow-hidden pt-20">
+        <aside className="hidden h-screen w-64 flex-col border-r border-[#3d4a3d]/15 bg-[#131313] py-8 lg:flex">
+          <div className="mb-10 flex items-center gap-3 px-8">
+            <div className="h-10 w-10 overflow-hidden rounded-full bg-[#2a2a2a]">
               <img
-                className="h-48 w-full rounded-2xl object-cover grayscale transition-all duration-700 group-hover:grayscale-0"
-                alt="Studio desktop setup with synchronized tablets and smartphones"
-                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBS6HUFVJlkTiAeeae9D6SeqOP-JRo0urIyt7aerCrViw-m-sp43JLDCEIaXMnclYpG3h9gLCzBLs5v48McvxPsBMxsRb1wcHJ-nHSCwgguxCLCvAo-5gEJpWi3US0dWUOds9CbJ_ULeDVBxW9hwuDk--3ZTrTA3BstXEZKsYtPCLxNtAZhWVzrEmdnB8XKqBG__EHGZJvpJhlcEBxnYwNydEAEsOtXFCT9ggmR6rdZVsU_-_EkYKeIdD7SMh4LEjXco7lHk4JVn7zm"
+                className="h-full w-full object-cover"
+                alt="close-up portrait of a professional singer with stage lighting and atmospheric smoke in background"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD0yjB-2kgIwiuQRhzW5eFZlBN3CVpGX4wDRYcf95vtNyPzON3QC0ft0ZMVGDP6lJqfSBEV3WbG5QC8XYxexQWxyciWiWulOJQPaYhe2gokhLqJbQHDRgcCl9kQ8lfzYR7YuaBZoSmx08hNN5kwUq_TkQUX00wY2RS97ifC0_eKGAeBSSfk0c62V3-hKrwCRV7421ws30sZZDfbM7atYbSsK7HgWnkYO2YiV9oS3BannLvfUZUjhJIBDjXzpJtgK86L3crXj1PW7X2q"
               />
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold tracking-tight">Multi-device Support</h3>
-                <p className="text-[#bccbb9]">
-                  Sync your setlist across iPad, Android, and Desktop. One conductor, infinite
-                  screens.
-                </p>
-                <div className="flex items-center gap-4 text-[#bccbb9]/40">
-                  <span className="material-symbols-outlined">tablet_mac</span>
-                  <span className="material-symbols-outlined">smartphone</span>
-                  <span className="material-symbols-outlined">laptop_mac</span>
-                </div>
-              </div>
             </div>
-
-            <div className="group relative flex flex-col gap-6 overflow-hidden rounded-2xl bg-[#201f1f] p-8">
-              <div className="flex h-48 items-center justify-center overflow-hidden rounded-2xl bg-[#2a2a2a]">
-                <div className="flex h-20 items-end gap-1">
-                  <div className="h-full w-1 animate-pulse bg-[#4be277]" />
-                  <div className="h-2/3 w-1 animate-pulse bg-[#4be277] [animation-delay:75ms]" />
-                  <div className="h-3/4 w-1 animate-pulse bg-[#4be277] [animation-delay:150ms]" />
-                  <div className="h-1/2 w-1 animate-pulse bg-[#4be277] [animation-delay:200ms]" />
-                  <div className="h-5/6 w-1 animate-pulse bg-[#4be277] [animation-delay:300ms]" />
-                </div>
-              </div>
-              <div className="space-y-4">
-                <h3 className="text-2xl font-bold tracking-tight">Audio Sync</h3>
-                <p className="text-[#bccbb9]">
-                  Intelligent BPM detection matches your scroll to the drummer&apos;s click track
-                  automatically.
-                </p>
-              </div>
-            </div>
-
-            <div className="group relative col-span-1 flex flex-col items-center gap-12 overflow-hidden rounded-2xl bg-[#201f1f] p-12 md:col-span-2 md:flex-row">
-              <div className="flex-1 space-y-6">
-                <div className="inline-block rounded border border-[#4be277]/20 px-2 py-1 text-[10px] font-medium tracking-[0.05em] uppercase text-[#4be277]">
-                  Hardware Integration
-                </div>
-                <h3 className="text-4xl font-bold tracking-tight">Studio-Grade Reliability</h3>
-                <p className="text-lg text-[#bccbb9]">
-                  Designed for the stage environment. High contrast, large hit targets, and offline
-                  mode. When the Wi-Fi fails, the show goes on.
-                </p>
-              </div>
-              <div className="aspect-square w-full rounded-xl border border-[#3d4a3d]/10 bg-[#2a2a2a] shadow-inner md:w-1/3 flex items-center justify-center">
-                <span className="material-symbols-outlined text-8xl text-[#4be277]/10">
-                  settings_input_component
-                </span>
-              </div>
+            <div>
+              <div className="text-xs font-bold tracking-widest text-[#22C55E] uppercase">Lead Vocalist</div>
+              <div className="text-[10px] tracking-[0.1em] text-[#bccbb9] uppercase">Active Session</div>
             </div>
           </div>
-        </section>
 
-        <section className="mx-auto max-w-7xl px-8 pb-32">
-          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#201f1f] to-[#353534] p-16 text-center">
-            <div className="absolute top-0 left-0 h-1 w-full bg-gradient-to-r from-transparent via-[#4be277] to-transparent" />
-            <h2 className="mb-8 text-5xl leading-tight font-black tracking-tighter md:text-7xl">
-              READY TO
-              <br />
-              DOMINATE THE STAGE?
-            </h2>
-            <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
-              <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-12 py-6 text-xl font-black text-[#003915] transition-all hover:shadow-[0_0_40px_rgba(34,197,94,0.3)]">
-                Start Singing
+          <nav className="flex-1 space-y-2">
+            {[
+              ["queue_music", "Current Set", false],
+              ["library_music", "Library", true],
+              ["history", "History", false],
+              ["settings_input_component", "Hardware", false],
+            ].map(([icon, label, active]) => (
+              <a
+                key={label}
+                className={`flex items-center gap-4 px-8 py-3 transition-colors duration-300 ${
+                  active
+                    ? "border-r-4 border-[#22C55E] bg-[#22C55E]/10 text-[#22C55E]"
+                    : "text-[#e5e2e1]/40 hover:bg-[#2a2a2a] hover:text-[#e5e2e1]"
+                }`}
+                href="#"
+              >
+                <span className="material-symbols-outlined">{icon}</span>
+                <span className="text-[0.75rem] tracking-widest uppercase">{label}</span>
+              </a>
+            ))}
+          </nav>
+
+          <div className="mt-auto px-6">
+            <button className="w-full rounded-xl border border-[#22C55E]/30 py-4 text-xs font-bold tracking-widest text-[#22C55E] uppercase transition-colors hover:bg-[#22C55E]/5">
+              New Setlist
+            </button>
+          </div>
+        </aside>
+
+        <main className="no-scrollbar flex-1 overflow-y-auto bg-[#131313] px-8 py-8 md:px-12">
+          <header className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
+            <div>
+              <h1 className="mb-2 text-5xl font-black tracking-tight uppercase">Song Library</h1>
+              <p className="text-sm tracking-wide text-[#bccbb9]">1,248 ASSETS SYNCED ACROSS STUDIO</p>
+            </div>
+            <div className="flex gap-2">
+              <button className="flex items-center gap-2 rounded-full bg-[#2a2a2a] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors hover:bg-[#393939]">
+                <span className="material-symbols-outlined text-sm">filter_list</span>
+                Genre
               </button>
-              <p className="font-medium text-[#bccbb9]/60">No credit card required. Free 30-day session trial.</p>
+              <button className="flex items-center gap-2 rounded-full bg-[#2a2a2a] px-5 py-2.5 text-xs font-bold tracking-widest uppercase transition-colors hover:bg-[#393939]">
+                <span className="material-symbols-outlined text-sm">sort</span>
+                Latest
+              </button>
             </div>
-            <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-[#4be277]/5 blur-[100px]" />
-            <div className="absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#4be277]/5 blur-[100px]" />
-          </div>
-        </section>
-      </main>
+          </header>
 
-      <footer className="w-full border-t border-[#3d4a3d]/15 bg-[#131313] py-12">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-8 md:flex-row">
-          <div className="flex flex-col gap-4">
-            <div className="text-lg font-black tracking-tighter text-[#22C55E]">OBSIDIAN STAGE</div>
-            <p className="text-[10px] font-medium tracking-[0.05em] text-[#e5e2e1]/30 uppercase">
-              © 2024 OBSIDIAN STAGE. ENGINEERED FOR PERFORMANCE.
-            </p>
+          <div className="grid grid-cols-1 gap-8 pb-24 md:grid-cols-2 xl:grid-cols-3">
+            {songs.map((song) => (
+              <div
+                key={song.title}
+                className="group relative rounded-lg bg-[#1c1b1b] p-6 transition-all duration-300 hover:bg-[#201f1f]"
+              >
+                <div className="flex gap-6">
+                  <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg shadow-lg">
+                    <img
+                      className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      alt={song.alt}
+                      src={song.image}
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
+                      <span className="material-symbols-outlined text-4xl text-[#4be277]">play_circle</span>
+                    </div>
+                  </div>
+                  <div className="flex flex-col justify-center overflow-hidden">
+                    <h3 className="truncate text-lg font-bold transition-colors group-hover:text-[#4be277]">{song.title}</h3>
+                    <p className="mb-4 text-sm font-medium tracking-tighter text-[#bccbb9] uppercase">{song.artist}</p>
+                    <div className="flex items-center gap-4">
+                      {[
+                        ["BPM", song.bpm],
+                        ["Key", song.key],
+                        ["Time", song.time],
+                      ].map(([label, value]) => (
+                        <div key={`${song.title}-${label}`} className="flex flex-col">
+                          <span className="text-[10px] font-bold tracking-widest text-[#bccbb9]/60 uppercase">{label}</span>
+                          <span className="font-mono text-xs">{value}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
-          <div className="flex gap-8 text-[10px] font-medium tracking-[0.05em] uppercase">
-            <a className="text-[#e5e2e1]/30 opacity-80 transition-opacity hover:text-[#22C55E] hover:opacity-100" href="#">
-              Terms
-            </a>
-            <a className="text-[#e5e2e1]/30 opacity-80 transition-opacity hover:text-[#22C55E] hover:opacity-100" href="#">
-              Privacy
-            </a>
-            <a className="text-[#e5e2e1]/30 opacity-80 transition-opacity hover:text-[#22C55E] hover:opacity-100" href="#">
-              Hardware Sync
-            </a>
-            <a className="text-[#e5e2e1]/30 opacity-80 transition-opacity hover:text-[#22C55E] hover:opacity-100" href="#">
-              API
-            </a>
+        </main>
+      </div>
+
+      <div className="pointer-events-none fixed bottom-0 z-50 w-full px-6 pb-6">
+        <div className="pointer-events-auto mx-auto flex h-20 max-w-5xl items-center rounded-2xl border border-[#3d4a3d]/15 bg-[#201f1f]/70 px-8 shadow-[0_20px_40px_rgba(0,0,0,0.5)] backdrop-blur-xl">
+          <div className="flex min-w-[200px] items-center gap-4">
+            <div className="h-10 w-10 shrink-0 overflow-hidden rounded-md">
+              <img
+                className="h-full w-full object-cover"
+                alt="album art thumbnail"
+                src="https://lh3.googleusercontent.com/aida-public/AB6AXuDNFYQvOyO5QJno4jDCBwh2xYGzc8r0wiPyE0TV1bMw5X2Na34H_G56czjOXx0Dy0BUj_WcYN0JWvndm1h-r2DpD-yfur58ba7ipb8jZ2_KRyMWEBhbhZibdlexMQugpuP_3GzNnu05uMlOyMSeqT5quDQjX7vXnpKl9vNYqHS0EmBLOgfZMqgTIimmXfdbKNULrZ9dQpMNnXr6pb5WJ_66n1Yf4f1mn5rG2XgTQY3s3qe7PKMZoFm4hym0QZaT83ru_TYh3kAhY2Ax"
+              />
+            </div>
+            <div className="overflow-hidden">
+              <div className="truncate text-sm font-bold">Neon Horizon</div>
+              <div className="truncate text-[10px] tracking-widest text-[#bccbb9] uppercase">Preparing Session...</div>
+            </div>
+          </div>
+
+          <div className="flex flex-1 flex-col items-center gap-1">
+            <div className="flex items-center gap-6">
+              <button className="material-symbols-outlined text-[#e5e2e1]/50 hover:text-[#e5e2e1]">skip_previous</button>
+              <button className="flex h-10 w-10 items-center justify-center rounded-full bg-[#4be277] text-[#003915]">
+                <span className="material-symbols-outlined text-2xl">play_arrow</span>
+              </button>
+              <button className="material-symbols-outlined text-[#e5e2e1]/50 hover:text-[#e5e2e1]">skip_next</button>
+            </div>
+            <div className="relative mt-1 h-1 w-full max-w-md overflow-hidden rounded-full bg-[#353534]">
+              <div className="absolute top-0 left-0 h-full w-1/3 bg-[#4be277] shadow-[0_0_8px_rgba(34,197,94,0.6)]" />
+            </div>
+          </div>
+
+          <div className="flex min-w-[200px] items-center justify-end gap-6">
+            <button className="material-symbols-outlined text-[#bccbb9] hover:text-[#4be277]">lyrics</button>
+            <button className="material-symbols-outlined text-[#bccbb9] hover:text-[#4be277]">volume_up</button>
+            <div className="h-8 w-px bg-[#3d4a3d]/30" />
+            <div className="flex flex-col items-end">
+              <div className="text-[10px] font-bold tracking-widest text-[#4be277] uppercase">Sync Status</div>
+              <div className="font-mono text-xs">LATENCY: 4ms</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer className="relative z-10 mb-20 w-full border-t border-[#3d4a3d]/15 bg-[#131313] py-12">
+        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-8 px-8 md:flex-row">
+          <div className="text-[10px] font-medium tracking-[0.05em] text-[#e5e2e1]/30 uppercase">
+            © 2024 OBSIDIAN STAGE. ENGINEERED FOR PERFORMANCE.
+          </div>
+          <div className="flex gap-8">
+            {[
+              "Terms",
+              "Privacy",
+              "Hardware Sync",
+              "API",
+            ].map((item) => (
+              <a
+                key={item}
+                className="text-[10px] font-medium tracking-[0.05em] text-[#e5e2e1]/30 uppercase transition-opacity duration-200 hover:text-[#22C55E]"
+                href="#"
+              >
+                {item}
+              </a>
+            ))}
           </div>
         </div>
       </footer>
