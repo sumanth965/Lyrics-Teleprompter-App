@@ -9,7 +9,7 @@ import LyricsDisplay from "./LyricsDisplay";
 import Controls from "./Controls";
 import AudioPlayer from "./AudioPlayer";
 
-export default function PlayerScreen({ songId }) {
+export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const selectedSong = useMemo(() => songs.find((song) => song.id === songId) ?? null, [songId]);
   const lyrics = selectedSong?.lyrics ?? [];
   const audioSrc = selectedSong?.audio;
@@ -129,7 +129,7 @@ export default function PlayerScreen({ songId }) {
             {songs.map((song) => (
               <Link
                 key={song.id}
-                href={`/player?songId=${song.id}`}
+                href={`${routeBase}?songId=${song.id}`}
                 className={`rounded-full px-3 py-1 text-xs transition ${
                   song.id === selectedSong.id
                     ? "bg-green-500 font-semibold text-black"
