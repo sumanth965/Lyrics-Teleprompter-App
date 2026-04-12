@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import songs from "../data/songs.json";
 import useScroll from "../hooks/useScroll";
 import useAudioSync from "../hooks/useAudioSync";
@@ -15,50 +15,51 @@ export default function PlayerScreen({ songId }) {
   const audioSrc = selectedSong?.audio;
 
   const [speed, setSpeed] = useState(1);
-  const [audioTime, setAudioTime] = useState(0);
-  const [restartTick, setRestartTick] = useState(0);
-  const [audioReady, setAudioReady] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [resetToken, setResetToken] = useState(0);
 
-  const { containerRef, isPlaying, play, pause, restart, followElement } = useScroll(speed);
-  const syncedIndex = useAudioSync(lyrics, audioTime);
+  const {
+    audioRef,
+    currentTime,
+    duration,
+    activeIndex,
+    isAudioReady,
+    audioError,
+    handleCanPlay,
+    handleLoadedMetadata,
+    handleTimeUpdate,
+    handleEnded,
+    handleAudioError,
+    seekTo,
+  } = useAudioSync({
+    lyrics,
+    isPlaying,
+    playbackRate: speed,
+    resetToken,
+  });
+
+  const { containerRef, followElement, restartScroll } = useScroll({ isPlaying, speed });
+
   const isAudioMissing = !audioSrc;
 
-  const animationFrameRef = useRef(null);
-  const latestTimeRef = useRef(0);
-
-  const debouncedTimeUpdate = useCallback((nextTime) => {
-    latestTimeRef.current = nextTime;
-
-    if (animationFrameRef.current) return;
-
-    animationFrameRef.current = requestAnimationFrame(() => {
-      setAudioTime(latestTimeRef.current);
-      animationFrameRef.current = null;
-    });
-  }, []);
-
-  useEffect(() => () => {
-    if (animationFrameRef.current) {
-      cancelAnimationFrame(animationFrameRef.current);
-    }
-  }, []);
-
   const onPlayPause = useCallback(() => {
-    if (isAudioMissing) return;
-    if (isPlaying) pause();
-    else play();
-  }, [isAudioMissing, isPlaying, pause, play]);
+    if (isAudioMissing || !isAudioReady || audioError) return;
+    setIsPlaying((prev) => !prev);
+  }, [audioError, isAudioMissing, isAudioReady]);
 
   const onRestart = useCallback(() => {
-    pause();
-    restart();
-    setAudioTime(0);
-    setRestartTick((value) => value + 1);
-  }, [pause, restart]);
+    setIsPlaying(false);
+    restartScroll();
+    setResetToken((value) => value + 1);
+  }, [restartScroll]);
 
   const onSpeedChange = useCallback((nextSpeed) => {
     setSpeed(nextSpeed);
   }, []);
+
+  const onSeek = useCallback((nextTime) => {
+    seekTo(nextTime);
+  }, [seekTo]);
 
   const onKeyDown = useCallback((event) => {
     if (event.target instanceof HTMLInputElement || event.target instanceof HTMLTextAreaElement) {
@@ -96,18 +97,24 @@ export default function PlayerScreen({ songId }) {
     );
   }
 
-  const controlsDisabled = isAudioMissing || !audioReady;
+  const controlsDisabled = isAudioMissing || !isAudioReady || audioError;
 
   return (
     <div className="h-screen overflow-hidden bg-black text-white">
       <AudioPlayer
         src={audioSrc}
-        isPlaying={isPlaying}
-        playbackRate={speed}
-        onTimeUpdate={debouncedTimeUpdate}
-        onCanPlay={() => setAudioReady(true)}
-        onEnded={pause}
-        resetToken={restartTick}
+        audioRef={audioRef}
+        onTimeUpdate={handleTimeUpdate}
+        onCanPlay={handleCanPlay}
+        onLoadedMetadata={handleLoadedMetadata}
+        onEnded={() => {
+          setIsPlaying(false);
+          handleEnded();
+        }}
+        onError={() => {
+          setIsPlaying(false);
+          handleAudioError();
+        }}
       />
 
       <div ref={containerRef} className="teleprompter-scroll h-full overflow-y-auto pb-36">
@@ -140,7 +147,7 @@ export default function PlayerScreen({ songId }) {
             <p className="text-xl text-zinc-400 md:text-2xl">No lyrics available for this song.</p>
           </div>
         ) : (
-          <LyricsDisplay lyrics={lyrics} activeIndex={syncedIndex} onActiveLineChange={followElement} />
+          <LyricsDisplay lyrics={lyrics} activeIndex={activeIndex} onActiveLineChange={followElement} />
         )}
       </div>
 
@@ -151,6 +158,9 @@ export default function PlayerScreen({ songId }) {
         speed={speed}
         onSpeedChange={onSpeedChange}
         disabled={controlsDisabled}
+        currentTime={currentTime}
+        duration={duration}
+        onSeek={onSeek}
       />
     </div>
   );

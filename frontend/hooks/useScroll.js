@@ -1,19 +1,17 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { computeCenteredScrollTop, smoothStep } from "../utils/scrollHelper";
 
-export default function useScroll(speed = 1) {
+export default function useScroll({ isPlaying, speed = 1 }) {
   const containerRef = useRef(null);
   const targetScrollRef = useRef(0);
   const rafRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
 
   const stopAnimation = useCallback(() => {
-    if (rafRef.current) {
-      cancelAnimationFrame(rafRef.current);
-      rafRef.current = null;
-    }
+    if (!rafRef.current) return;
+    cancelAnimationFrame(rafRef.current);
+    rafRef.current = null;
   }, []);
 
   useEffect(() => {
@@ -46,10 +44,7 @@ export default function useScroll(speed = 1) {
     }
   }, [isPlaying]);
 
-  const play = useCallback(() => setIsPlaying(true), []);
-  const pause = useCallback(() => setIsPlaying(false), []);
-
-  const restart = useCallback(() => {
+  const restartScroll = useCallback(() => {
     const container = containerRef.current;
     if (!container) return;
 
@@ -59,10 +54,7 @@ export default function useScroll(speed = 1) {
 
   return {
     containerRef,
-    isPlaying,
-    play,
-    pause,
-    restart,
     followElement,
+    restartScroll,
   };
 }

@@ -1,40 +1,14 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-
 export default function AudioPlayer({
   src,
-  isPlaying,
-  playbackRate,
+  audioRef,
   onTimeUpdate,
   onCanPlay,
+  onLoadedMetadata,
   onEnded,
-  resetToken,
+  onError,
 }) {
-  const audioRef = useRef(null);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.playbackRate = playbackRate;
-  }, [playbackRate]);
-
-  useEffect(() => {
-    if (!audioRef.current || !src) return;
-
-    if (isPlaying) {
-      audioRef.current.play().catch(() => {
-        // user gesture lock or unsupported media
-      });
-    } else {
-      audioRef.current.pause();
-    }
-  }, [isPlaying, src]);
-
-  useEffect(() => {
-    if (!audioRef.current) return;
-    audioRef.current.currentTime = 0;
-  }, [resetToken]);
-
   if (!src) {
     return (
       <div className="fixed right-4 top-4 z-20 w-72 rounded-lg border border-zinc-800 bg-zinc-900/90 p-3">
@@ -53,8 +27,10 @@ export default function AudioPlayer({
         controls
         className="w-full"
         onTimeUpdate={(event) => onTimeUpdate(event.currentTarget.currentTime)}
-        onLoadedData={onCanPlay}
+        onCanPlay={onCanPlay}
+        onLoadedMetadata={onLoadedMetadata}
         onEnded={onEnded}
+        onError={onError}
       />
     </div>
   );
