@@ -1,12 +1,14 @@
+import Link from "next/link";
+
 export default function HomePage() {
   return (
     <main className="bg-[#131313] text-[#e5e2e1] selection:bg-[#22c55e]/30">
       <nav className="fixed top-0 z-50 flex w-full items-center justify-between bg-[#131313]/70 px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-md">
         <div className="text-xl font-black tracking-tighter text-[#22C55E]">OBSIDIAN STAGE</div>
         <div className="hidden items-center gap-8 tracking-tight md:flex">
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
+          <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/library">
             Library
-          </a>
+          </Link>
           <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
             Studio
           </a>
