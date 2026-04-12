@@ -1,18 +1,1 @@
-@import "tailwindcss";
-
-body {
-  font-family: Inter, sans-serif;
-}
-
-.material-symbols-outlined {
-  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-
-.scrolling-content {
-  mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
-}
-
-.active-lyric-glow {
-  text-shadow: 0 0 20px rgba(75, 226, 119, 0.4);
-}
+@import "../styles/globals.css";

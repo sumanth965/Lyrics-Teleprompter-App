@@ -2,26 +2,28 @@
 
 import SpeedSlider from "./SpeedSlider";
 
-export default function Controls({ isPlaying, onPlayPause, onRestart, speed, onSpeedChange }) {
+export default function Controls({ isPlaying, speed, onTogglePlay, onRestart, currentTime, duration, onSpeedChange }) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 border-t border-zinc-800 bg-zinc-950/90 px-4 py-4 backdrop-blur">
-      <div className="mx-auto flex w-full max-w-5xl flex-col items-center justify-between gap-4 md:flex-row">
+    <div className="sticky bottom-0 left-0 right-0 border-t border-zinc-800 bg-black/95 px-4 py-4 backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={onPlayPause}
-            className="rounded-full bg-green-500 px-5 py-2 font-semibold text-black transition hover:bg-green-400"
+            onClick={onTogglePlay}
+            className="rounded-xl bg-yellow-400 px-6 py-2.5 font-semibold text-black transition-all duration-300 hover:bg-yellow-300"
           >
             {isPlaying ? "Pause" : "Play"}
           </button>
-
           <button
             type="button"
             onClick={onRestart}
-            className="rounded-full border border-zinc-600 px-5 py-2 font-semibold text-white transition hover:border-zinc-400"
+            className="rounded-xl border border-zinc-600 px-6 py-2.5 font-semibold text-white transition-all duration-300 hover:border-zinc-400"
           >
             Restart
           </button>
+          <div className="text-sm text-gray-400">
+            {currentTime} / {duration}
+          </div>
         </div>
 
         <SpeedSlider value={speed} onChange={onSpeedChange} />

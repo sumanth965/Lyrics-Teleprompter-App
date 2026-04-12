@@ -2,29 +2,43 @@ import Link from "next/link";
 import PlayerScreen from "../../components/PlayerScreen";
 import songs from "../../data/songs.json";
 
-function resolveSongId(songParam) {
-  const parsedSongId = Number(songParam);
-  if (Number.isNaN(parsedSongId)) return songs[0]?.id;
+function resolveSong(songIdParam) {
+  if (!songs.length) {
+    return { song: null, invalidSongId: false };
+  }
 
-  const songExists = songs.some((song) => song.id === parsedSongId);
-  return songExists ? parsedSongId : songs[0]?.id;
+  const numericSongId = Number(songIdParam);
+
+  if (!Number.isFinite(numericSongId)) {
+    return { song: songs[0], invalidSongId: false };
+  }
+
+  const matchedSong = songs.find((song) => song.id === numericSongId);
+
+  if (!matchedSong) {
+    return { song: songs[0], invalidSongId: true };
+  }
+
+  return { song: matchedSong, invalidSongId: false };
 }
 
 export default async function PlayerPage({ searchParams }) {
   const params = await searchParams;
-  const songId = resolveSongId(params?.song);
+  const { song, invalidSongId } = resolveSong(params?.songId);
 
   if (!songs.length) {
     return (
-      <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-zinc-950 px-6 text-center text-zinc-100">
-        <h1 className="text-3xl font-bold">No songs available</h1>
-        <p className="max-w-lg text-zinc-400">Add song entries in <code>data/songs.json</code> to start the teleprompter player.</p>
-        <Link href="/" className="rounded-lg border border-zinc-700 px-4 py-2 font-medium hover:bg-zinc-900">
-          Back Home
-        </Link>
+      <main className="flex min-h-screen items-center justify-center bg-black px-4 text-center text-white">
+        <div>
+          <p className="text-2xl font-semibold">No songs in library.</p>
+          <p className="mt-2 text-gray-400">Add songs to data/songs.json.</p>
+          <Link href="/library" className="mt-6 inline-block rounded-lg bg-yellow-400 px-4 py-2 font-medium text-black">
+            Open Library
+          </Link>
+        </div>
       </main>
     );
   }
 
-  return <PlayerScreen songId={songId} />;
+  return <PlayerScreen song={song} invalidSongId={invalidSongId} />;
 }

@@ -2,9 +2,9 @@
 
 export default function SpeedSlider({ value, onChange }) {
   return (
-    <div className="flex w-full max-w-xs flex-col gap-2">
-      <label htmlFor="speed" className="text-sm text-zinc-300">
-        Scroll Speed: <span className="font-semibold text-white">{value.toFixed(1)}x</span>
+    <div className="w-full max-w-sm">
+      <label htmlFor="speed" className="mb-2 block text-sm text-gray-300">
+        Speed: <span className="font-semibold text-yellow-400">{value.toFixed(1)}x</span>
       </label>
       <input
         id="speed"
@@ -14,7 +14,7 @@ export default function SpeedSlider({ value, onChange }) {
         step="0.1"
         value={value}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="w-full accent-green-400"
+        className="h-2 w-full cursor-pointer appearance-none rounded-lg bg-zinc-700 accent-yellow-400"
       />
     </div>
   );

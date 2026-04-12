@@ -1,40 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
+import { getCenteredScrollTop, smoothScrollTo } from "../utils/scrollHelper";
 
-/**
- * Auto-scroll helper for teleprompter mode.
- * Uses setInterval for predictable speed control.
- */
-export default function useScroll(speed = 1) {
+export default function useScroll({ activeIndex, speed = 1 }) {
   const containerRef = useRef(null);
-  const [isPlaying, setIsPlaying] = useState(false);
+  const lineRefs = useRef([]);
 
   useEffect(() => {
-    if (!isPlaying || !containerRef.current) return;
+    if (activeIndex < 0) return;
 
-    const interval = setInterval(() => {
-      if (containerRef.current) {
-        containerRef.current.scrollTop += speed * 0.8;
-      }
-    }, 16);
+    const container = containerRef.current;
+    const target = lineRefs.current[activeIndex];
 
-    return () => clearInterval(interval);
-  }, [isPlaying, speed]);
+    if (!container || !target) return;
 
-  const play = () => setIsPlaying(true);
-  const pause = () => setIsPlaying(false);
-  const restart = () => {
-    if (containerRef.current) {
-      containerRef.current.scrollTop = 0;
-    }
-  };
+    const destination = getCenteredScrollTop(container, target);
+    const duration = Math.max(120, 360 / speed);
+
+    return smoothScrollTo(container, destination, duration);
+  }, [activeIndex, speed]);
 
   return {
     containerRef,
-    isPlaying,
-    play,
-    pause,
-    restart,
+    lineRefs,
   };
 }
