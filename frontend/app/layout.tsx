@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "OBSIDIAN STAGE | Player",
-  description: "Performance-grade lyrics teleprompter player interface.",
+  title: "OBSIDIAN STAGE | Performance Lyrics Teleprompter",
+  description: "Performance lyrics teleprompter landing page and stage-ready player experience.",
 };
 
 export default function RootLayout({
