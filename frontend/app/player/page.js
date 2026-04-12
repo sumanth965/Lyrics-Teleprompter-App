@@ -2,17 +2,18 @@ import Link from "next/link";
 import PlayerScreen from "../../components/PlayerScreen";
 import songs from "../../data/songs.json";
 
-function resolveSongId(songParam) {
-  const parsedSongId = Number(songParam);
-  if (Number.isNaN(parsedSongId)) return songs[0]?.id;
+function parseSongId(songIdParam) {
+  if (!songIdParam) return null;
 
-  const songExists = songs.some((song) => song.id === parsedSongId);
-  return songExists ? parsedSongId : songs[0]?.id;
+  const parsedSongId = Number(songIdParam);
+  if (Number.isNaN(parsedSongId)) return null;
+
+  return songs.some((song) => song.id === parsedSongId) ? parsedSongId : null;
 }
 
 export default async function PlayerPage({ searchParams }) {
   const params = await searchParams;
-  const songId = resolveSongId(params?.song);
+  const songId = parseSongId(params?.songId);
 
   if (!songs.length) {
     return (
@@ -26,5 +27,17 @@ export default async function PlayerPage({ searchParams }) {
     );
   }
 
-  return <PlayerScreen songId={songId} />;
+  if (!songId) {
+    return (
+      <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-zinc-950 px-6 text-center text-zinc-100">
+        <h1 className="text-3xl font-bold">No song selected</h1>
+        <p className="max-w-lg text-zinc-400">Choose a song from the library to open the player.</p>
+        <Link href="/library" className="rounded-lg border border-zinc-700 px-4 py-2 font-medium hover:bg-zinc-900">
+          Go to Library
+        </Link>
+      </main>
+    );
+  }
+
+  return <PlayerScreen key={songId} songId={songId} />;
 }

@@ -1,13 +1,6 @@
 import Link from "next/link";
-
-const songs = [
-  { title: "Neon Horizon", artist: "Echoes of Silence", bpm: 128, key: "Am", time: "04:22", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB49aw64LjMwp7QFoZWBSn9QM_Qw7btChsXE3pK4uqekHo-dfOsfALyHAA5ArKEQSF0m4zoLanZVgVqROvSWX627Cluarh8n-qtRsooVR-dWhXlsyhV13qwcTFf14ufcNUpoEX-H6rLiW0KphM3HBsmEPA017m7GgYJeA07TEbA74wCWfsQwk0GtX-iY4FHSH2348guLCa4due2tZNyYNxRbrbgxev46ZcCuzNi4wT3OeZoJEjbVIaRBuwFClV5bi02PGTHDdad4EJR" },
-  { title: "Obsidian Pulse", artist: "Vortex Theory", bpm: 115, key: "F#m", time: "03:58", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuDz3nA1OsTLuSDuBXJ08myN1hO15go3AJ_LgSMe4cFkxivDBsgYWCmlKrmh1o9YKd_tHomsVb8b9M-sOIB52i8Qk1tNbnkb9-Nev6e6N5h1DedJZoJj1nCMQ8ZcMmPJxpzaHq_VjoDkERROF8Ktq9t5LKnCOdRT3OiyXjoarcikXyWCsa7S6rrZJene57tHRZScQ63FmSkzgbLpEj5_UzeQEAKcYJI5G8fy40tpoybaDIP7N5R_wVUh8wHYTzIZQ89F38jnZ-H1EiiV" },
-  { title: "Frictionless", artist: "Liquid Glass", bpm: 142, key: "C", time: "05:10", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuAyS7f7vThuHoHHyAsLXKdJI2oMR-bYAZt_GWB8c4Qz3W_pw2x6kEuRzNFyIiwcqcoy2z1WbHWFjuHc7YxSy9VPvEm397tRGCipuf-9hjjqgKnNcs8DV6J4S3B0Iov1omzawcaxIRd8IXRC6bGZBES4mXSEPwe2ih2sFCT72j2CnslmEKMkk_aqDJqh_fBVslRsza9ZvN_PxzgMGq3OGJDU5YFIH2BWyUBTBYNDdrhLeYWaJ64y4hua7RbQGtLviza1FSjhjN2hIe_o" },
-  { title: "Midnight Logic", artist: "Quartz Project", bpm: 92, key: "Gm", time: "03:45", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBoPFWvpSDmElt8cKfPxs3gXqNC011GUXZFlMXIe8NDfFBCFInEa5fpTmPI9rFsfRkxUyIn73NXwWbxUUdYK6bRtj2r1E8RVZibYfgczPeHPDOW2IYAPofMfZrgDxrZ2hWEooXFBnCP2m1oAPJSxDa96zt7TOpO_ttN7-OTAAP5MdpJzGUD2jqzEy9yfOuOKxMpfmIoCyb2hFySObnaX3JT-HZBxu4HYFEJMHDM-MdcWq1_RGgaBIo7HoWLdySR4NxEtHh1jz6vCfvZ" },
-  { title: "Static Void", artist: "The Architects", bpm: 175, key: "Eb", time: "02:31", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCLWXklFL1kXw9gNqjYWZRckqAfwOVC8fn9NZE-WnDykVntpbkpssq4o-cL0sX2uR0rEH6IEoLTTDnl18srWq9gTk_OfOEBtXbRIQtIwDcU5rs6-wFT1-XQZWABr7Ueolz3rUw_-vrilvMwb5w9tJpn4V7cwu3ljD1ub-zKf8r95H7ynPyCrcu2hk0mfuA2KvNhsJYJ4__Y9gEG-tgqUatbHgJF_55uhsoTw9NMC9x_ySIN-vPDzQa5fLGz_P9s2aZqkfbMUlJn3nrd" },
-  { title: "Titanium Echo", artist: "Metalsmith", bpm: 108, key: "Dm", time: "04:15", image: "https://lh3.googleusercontent.com/aida-public/AB6AXuB4fJKsrc-BueTASQAEkPy8kLne2pFQ61kHMUiS2VmEqk_yFRfyXeMIhR8TALXmuZBO0Uv2doHic0QQxZY4gmZHBtTci4GnwEhFsy2EO7AO_aauTqNV52ZJ16pa2BL3wzVH-7JI4Yl2h6Wnd5Ggtv0BHi8MfvPlmp1vhLLjoYo__eLQeijyns3NmBAvNDo2Ct_vrnJnVZDEUTpvslOoXuceOU4ny8Rx9fa730PkbJzVnKMcsBUxHrsahIAVZVSE_oKbk1zKFZIXyH4L" },
-];
+import SongCard from "../../components/SongCard";
+import songs from "../../data/songs.json";
 
 export default function LibraryPage() {
   return (
@@ -42,25 +35,7 @@ export default function LibraryPage() {
 
           <div className="grid grid-cols-1 gap-8 pb-24 md:grid-cols-2 xl:grid-cols-3">
             {songs.map((song) => (
-              <Link key={song.title} href="/player" className="group relative rounded-lg bg-[#1c1b1b] p-6 transition-all duration-300 hover:bg-[#201f1f]">
-                <div className="flex gap-6">
-                  <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg shadow-lg">
-                    <img alt={song.title} src={song.image} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
-                    <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
-                      <span className="material-symbols-outlined text-4xl text-[#4be277]">play_circle</span>
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-center overflow-hidden">
-                    <h3 className="truncate text-lg font-bold transition-colors group-hover:text-[#4be277]">{song.title}</h3>
-                    <p className="mb-4 text-sm font-medium uppercase tracking-tighter text-[#bccbb9]">{song.artist}</p>
-                    <div className="flex items-center gap-4 text-xs font-mono">
-                      <div className="flex flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#bccbb9]/60">BPM</span><span>{song.bpm}</span></div>
-                      <div className="flex flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#bccbb9]/60">Key</span><span>{song.key}</span></div>
-                      <div className="flex flex-col"><span className="text-[10px] font-bold uppercase tracking-widest text-[#bccbb9]/60">Time</span><span>{song.time}</span></div>
-                    </div>
-                  </div>
-                </div>
-              </Link>
+              <SongCard key={song.id} song={song} />
             ))}
           </div>
         </main>

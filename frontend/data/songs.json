@@ -3,6 +3,10 @@
     "id": 1,
     "title": "Sample Song",
     "artist": "Artist",
+    "bpm": 128,
+    "key": "Am",
+    "time": "04:22",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuB49aw64LjMwp7QFoZWBSn9QM_Qw7btChsXE3pK4uqekHo-dfOsfALyHAA5ArKEQSF0m4zoLanZVgVqROvSWX627Cluarh8n-qtRsooVR-dWhXlsyhV13qwcTFf14ufcNUpoEX-H6rLiW0KphM3HBsmEPA017m7GgYJeA07TEbA74wCWfsQwk0GtX-iY4FHSH2348guLCa4due2tZNyYNxRbrbgxev46ZcCuzNi4wT3OeZoJEjbVIaRBuwFClV5bi02PGTHDdad4EJR",
     "audio": "/audio/sample.mp3",
     "lyrics": [
       { "time": 0, "text": "When the lights go down, we start to breathe." },
@@ -16,6 +20,10 @@
     "id": 2,
     "title": "Midnight Echo",
     "artist": "Nova Lane",
+    "bpm": 115,
+    "key": "F#m",
+    "time": "03:58",
+    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDz3nA1OsTLuSDuBXJ08myN1hO15go3AJ_LgSMe4cFkxivDBsgYWCmlKrmh1o9YKd_tHomsVb8b9M-sOIB52i8Qk1tNbnkb9-Nev6e6N5h1DedJZoJj1nCMQ8ZcMmPJxpzaHq_VjoDkERROF8Ktq9t5LKnCOdRT3OiyXjoarcikXyWCsa7S6rrZJene57tHRZScQ63FmSkzgbLpEj5_UzeQEAKcYJI5G8fy40tpoybaDIP7N5R_wVUh8wHYTzIZQ89F38jnZ-H1EiiV",
     "audio": "/audio/midnight-echo.mp3",
     "lyrics": [
       { "time": 0, "text": "Midnight sky and a quiet street below." },
