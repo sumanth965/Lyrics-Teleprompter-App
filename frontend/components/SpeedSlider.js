@@ -1,6 +1,6 @@
 "use client";
 
-export default function SpeedSlider({ value, onChange }) {
+export default function SpeedSlider({ value, onChange, disabled = false }) {
   return (
     <div className="flex w-full max-w-xs flex-col gap-2">
       <label htmlFor="speed" className="text-sm text-zinc-300">
@@ -13,8 +13,9 @@ export default function SpeedSlider({ value, onChange }) {
         max="3"
         step="0.1"
         value={value}
+        disabled={disabled}
         onChange={(event) => onChange(Number(event.target.value))}
-        className="w-full accent-green-400"
+        className="w-full accent-green-400 disabled:cursor-not-allowed disabled:opacity-60"
       />
     </div>
   );

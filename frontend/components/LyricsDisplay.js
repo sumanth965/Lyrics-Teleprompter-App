@@ -1,16 +1,25 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { memo, useEffect, useRef } from "react";
 
-export default function LyricsDisplay({ lyrics, activeIndex }) {
+function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange }) {
   const lineRefs = useRef([]);
 
   useEffect(() => {
+    if (activeIndex < 0) return;
     const activeLine = lineRefs.current[activeIndex];
     if (activeLine) {
-      activeLine.scrollIntoView({ behavior: "smooth", block: "center" });
+      onActiveLineChange?.(activeLine);
     }
-  }, [activeIndex]);
+  }, [activeIndex, onActiveLineChange]);
+
+  if (!Array.isArray(lyrics) || lyrics.length === 0) {
+    return (
+      <div className="mx-auto flex w-full max-w-4xl flex-col items-center px-6 py-[35vh] text-center">
+        <p className="text-xl text-zinc-400 md:text-2xl">No lyrics available for this song.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-[35vh] text-center">
@@ -20,10 +29,10 @@ export default function LyricsDisplay({ lyrics, activeIndex }) {
           ref={(element) => {
             lineRefs.current[index] = element;
           }}
-          className={`text-2xl leading-relaxed transition-all duration-500 md:text-4xl ${
+          className={`text-2xl leading-relaxed transition-all duration-300 md:text-4xl ${
             index === activeIndex
-              ? "scale-105 font-semibold text-green-400"
-              : "text-zinc-400"
+              ? "scale-105 font-semibold text-green-400 brightness-110 opacity-100"
+              : "text-zinc-400 opacity-60"
           }`}
         >
           {line.text}
@@ -32,3 +41,5 @@ export default function LyricsDisplay({ lyrics, activeIndex }) {
     </div>
   );
 }
+
+export default memo(LyricsDisplay);
