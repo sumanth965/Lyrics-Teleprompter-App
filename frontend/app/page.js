@@ -9,9 +9,9 @@ export default function HomePage() {
           <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/library">
             Library
           </Link>
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
+          <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/studio">
             Studio
-          </a>
+          </Link>
           <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
             Settings
           </a>

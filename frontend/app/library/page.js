@@ -16,7 +16,7 @@ export default function LibraryPage() {
         <Link href="/" className="text-xl font-black tracking-tighter text-[#22C55E]">OBSIDIAN STAGE</Link>
         <div className="hidden items-center gap-8 tracking-tight md:flex">
           <Link className="border-b-2 border-[#22C55E] pb-1 font-bold text-[#22C55E]" href="/library">Library</Link>
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">Studio</a>
+          <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/studio">Studio</Link>
           <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">Settings</a>
         </div>
         <button className="rounded-xl bg-[#22C55E] px-6 py-2 font-bold text-[#003915] transition-all duration-200 active:scale-95">Go Live</button>
