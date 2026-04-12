@@ -1,0 +1,16 @@
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{0}: reset: moving to ORIG_HEAD
+[33md3f9121[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{1}: pull: Fast-forward
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{3}: reset: moving to HEAD~1
+[33md3f9121[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{4}: pull: Fast-forward
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{5}: Branch: renamed refs/heads/temp-branch to refs/heads/main
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{7}: checkout: moving from main to temp-branch
+[33m3b749a9[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;32mbackup-after-pull[m[33m)[m HEAD@{8}: commit: Updated Nav bar
+[33m430f88a[m HEAD@{9}: pull: Fast-forward
+[33mf4acb2c[m HEAD@{10}: pull: Fast-forward
+[33m8a47d4a[m HEAD@{11}: pull: Fast-forward
+[33m96c7e89[m HEAD@{12}: pull: Fast-forward
+[33mae73f97[m HEAD@{13}: pull: Fast-forward
+[33m451d0d2[m HEAD@{14}: commit: Added Backend
+[33m0727ab7[m HEAD@{15}: Branch: renamed refs/heads/master to refs/heads/main
+[33m0727ab7[m HEAD@{17}: commit (initial): First commit..
