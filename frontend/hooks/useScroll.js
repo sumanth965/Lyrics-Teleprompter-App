@@ -8,10 +8,31 @@ export default function useScroll({ isPlaying, speed = 1 }) {
   const targetScrollRef = useRef(0);
   const rafRef = useRef(null);
 
+  const lastUserScrollRef = useRef(0);
+  const isUserScrollingRef = useRef(false);
+
   const stopAnimation = useCallback(() => {
     if (!rafRef.current) return;
     cancelAnimationFrame(rafRef.current);
     rafRef.current = null;
+  }, []);
+
+  useEffect(() => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    const handleWheel = () => {
+      isUserScrollingRef.current = true;
+      lastUserScrollRef.current = Date.now();
+    };
+
+    container.addEventListener("wheel", handleWheel, { passive: true });
+    container.addEventListener("touchstart", handleWheel, { passive: true });
+
+    return () => {
+      container.removeEventListener("wheel", handleWheel);
+      container.removeEventListener("touchstart", handleWheel);
+    };
   }, []);
 
   useEffect(() => {
@@ -24,8 +45,16 @@ export default function useScroll({ isPlaying, speed = 1 }) {
       const container = containerRef.current;
       if (!container) return;
 
-      const easingFactor = Math.min(0.08 * speed, 0.35);
-      container.scrollTop = smoothStep(container.scrollTop, targetScrollRef.current, easingFactor);
+      // Resume auto-scroll after 3 seconds of no user interaction
+      if (isUserScrollingRef.current && Date.now() - lastUserScrollRef.current > 3000) {
+        isUserScrollingRef.current = false;
+      }
+
+      if (!isUserScrollingRef.current) {
+        const easingFactor = Math.min(0.08 * speed, 0.35);
+        container.scrollTop = smoothStep(container.scrollTop, targetScrollRef.current, easingFactor);
+      }
+      
       rafRef.current = requestAnimationFrame(tick);
     };
 
@@ -39,6 +68,7 @@ export default function useScroll({ isPlaying, speed = 1 }) {
 
     targetScrollRef.current = computeCenteredScrollTop(container, element);
 
+    // If not playing, jump immediately
     if (!isPlaying) {
       container.scrollTop = targetScrollRef.current;
     }
@@ -48,6 +78,7 @@ export default function useScroll({ isPlaying, speed = 1 }) {
     const container = containerRef.current;
     if (!container) return;
 
+    isUserScrollingRef.current = false;
     targetScrollRef.current = 0;
     container.scrollTop = 0;
   }, []);

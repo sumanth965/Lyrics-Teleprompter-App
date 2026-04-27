@@ -1,25 +1,32 @@
+"use client";
+
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import PlayerScreen from "../../components/PlayerScreen";
-import songs from "../../data/songs.json";
+import { useSongs } from "../../contexts/SongsContext";
 
-function parseSongId(songIdParam) {
-  if (!songIdParam) return null;
+export default function PlayerPage() {
+  const searchParams = useSearchParams();
+  const { songs, isLoaded } = useSongs();
+  
+  const songIdParam = searchParams.get("songId");
+  const songId = songIdParam ? Number(songIdParam) : null;
 
-  const parsedSongId = Number(songIdParam);
-  if (Number.isNaN(parsedSongId)) return null;
+  if (!isLoaded) {
+    return (
+      <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-100">
+        <p>Loading Player...</p>
+      </main>
+    );
+  }
 
-  return songs.some((song) => song.id === parsedSongId) ? parsedSongId : null;
-}
-
-export default async function PlayerPage({ searchParams }) {
-  const params = await searchParams;
-  const songId = parseSongId(params?.songId);
+  const selectedSong = songs.find(s => s.id === songId);
 
   if (!songs.length) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-zinc-950 px-6 text-center text-zinc-100">
         <h1 className="text-3xl font-bold">No songs available</h1>
-        <p className="max-w-lg text-zinc-400">Add song entries in <code>data/songs.json</code> to start the teleprompter player.</p>
+        <p className="max-w-lg text-zinc-400">Add song entries in the Library or Studio to start the teleprompter player.</p>
         <Link href="/" className="rounded-lg border border-zinc-700 px-4 py-2 font-medium hover:bg-zinc-900">
           Back Home
         </Link>
@@ -27,7 +34,7 @@ export default async function PlayerPage({ searchParams }) {
     );
   }
 
-  if (!songId) {
+  if (!selectedSong) {
     return (
       <main className="flex min-h-screen flex-col items-center justify-center gap-5 bg-zinc-950 px-6 text-center text-zinc-100">
         <h1 className="text-3xl font-bold">No song selected</h1>

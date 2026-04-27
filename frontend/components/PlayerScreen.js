@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import songs from "../data/songs.json";
+import { useSongs } from "../contexts/SongsContext";
 import useScroll from "../hooks/useScroll";
 import useAudioSync from "../hooks/useAudioSync";
 import LyricsDisplay from "./LyricsDisplay";
@@ -10,7 +10,8 @@ import Controls from "./Controls";
 import AudioPlayer from "./AudioPlayer";
 
 export default function PlayerScreen({ songId, routeBase = "/player" }) {
-  const selectedSong = useMemo(() => songs.find((song) => song.id === songId) ?? null, [songId]);
+  const { songs } = useSongs();
+  const selectedSong = useMemo(() => songs.find((song) => song.id === songId) ?? null, [songId, songs]);
   const lyrics = selectedSong?.lyrics ?? [];
   const audioSrc = selectedSong?.audio;
 

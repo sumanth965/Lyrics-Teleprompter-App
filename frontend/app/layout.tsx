@@ -6,6 +6,8 @@ export const metadata: Metadata = {
   description: "Performance lyrics teleprompter landing page and stage-ready player experience.",
 };
 
+import { SongsProvider } from "../contexts/SongsContext";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -23,7 +25,11 @@ export default function RootLayout({
           href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
         />
       </head>
-      <body className="min-h-full bg-[#131313] text-[#e5e2e1]">{children}</body>
+      <body className="min-h-full bg-[#131313] text-[#e5e2e1]">
+        <SongsProvider>
+          {children}
+        </SongsProvider>
+      </body>
     </html>
   );
 }

@@ -1,8 +1,16 @@
+"use client";
+
 import Link from "next/link";
 import SongCard from "../../components/SongCard";
-import songs from "../../data/songs.json";
+import { useSongs } from "../../contexts/SongsContext";
 
 export default function LibraryPage() {
+  const { songs, isLoaded } = useSongs();
+
+  if (!isLoaded) {
+    return <div className="bg-[#131313] min-h-screen text-[#e5e2e1] p-20">Loading Library...</div>;
+  }
+
   return (
     <div className="bg-[#131313] text-[#e5e2e1]">
       <nav className="fixed top-0 z-50 flex w-full items-center justify-between bg-[#131313]/70 px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-md">
