@@ -7,6 +7,7 @@ export const metadata: Metadata = {
 };
 
 import { SongsProvider } from "../contexts/SongsContext";
+import { SettingsProvider } from "../contexts/SettingsContext";
 
 export default function RootLayout({
   children,
@@ -14,7 +15,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="dark h-full">
+    <html lang="en" className="h-full">
       <head>
         <link
           rel="stylesheet"
@@ -26,9 +27,9 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full bg-[#131313] text-[#e5e2e1]">
-        <SongsProvider>
-          {children}
-        </SongsProvider>
+        <SettingsProvider>
+          <SongsProvider>{children}</SongsProvider>
+        </SettingsProvider>
       </body>
     </html>
   );

@@ -2,7 +2,7 @@
 
 import { memo, useEffect, useRef } from "react";
 
-function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange }) {
+function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48, lineSpacing = 1.6, darkMode = true }) {
   const lineRefs = useRef([]);
 
   useEffect(() => {
@@ -29,10 +29,13 @@ function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange }) {
           ref={(element) => {
             lineRefs.current[index] = element;
           }}
-          className={`text-2xl leading-relaxed transition-all duration-300 md:text-4xl ${
+          style={{ fontSize: `${fontSize}px`, lineHeight: lineSpacing }}
+          className={`transition-all duration-300 ${
             index === activeIndex
               ? "scale-105 font-semibold text-green-400 brightness-110 opacity-100"
-              : "text-zinc-400 opacity-60"
+              : darkMode
+                ? "text-zinc-400 opacity-60"
+                : "text-zinc-600 opacity-70"
           }`}
         >
           {line.text}

@@ -1,46 +1,47 @@
 "use client";
 
-import { useState, useCallback, useRef } from "react";
+import { useState, useRef } from "react";
 import { useSongs } from "../contexts/SongsContext";
 import { parseLyrics } from "../utils/lyricParser";
 import Link from "next/link";
 
 export default function StudioScreen() {
   const { songs, saveSong, deleteSong } = useSongs();
-  
+
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [rawLyrics, setRawLyrics] = useState("");
-  
+
   const fileInputRef = useRef(null);
 
   const onEdit = (song) => {
     setEditingId(song.id);
     setTitle(song.title);
     setArtist(song.artist);
-    // Convert array back to string if they want to edit raw
-    setRawLyrics(song.lyrics.map(l => `[${formatTime(l.time)}] ${l.text}`).join("\n"));
+    setRawLyrics(song.rawLyrics || song.lyrics.map((l) => `[${formatTime(l.time)}] ${l.text}`).join("\n"));
   };
 
   const onNew = () => {
-    setEditingId(Date.now()); // Simple unique ID
+    setEditingId(null);
     setTitle("New Song");
     setArtist("Unknown Artist");
     setRawLyrics("");
   };
 
-  const onSave = () => {
-    const parsed = parseLyrics(rawLyrics);
-    saveSong({
-      id: editingId,
-      title,
-      artist,
-      lyrics: parsed,
-      bpm: 120, // Default for now
-      audio: "", // Placeholder
-    });
-    setEditingId(null);
+  const onSave = async () => {
+    try {
+      await saveSong({
+        id: editingId,
+        title,
+        artist,
+        rawLyrics,
+        lyrics: parseLyrics(rawLyrics),
+      });
+      setEditingId(null);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const onImportClick = () => {
@@ -67,54 +68,54 @@ export default function StudioScreen() {
     return `${mins.toString().padStart(2, "0")}:${secs.padStart(5, "0")}`;
   };
 
-  if (editingId) {
+  if (editingId !== null || title) {
     return (
-      <div className="min-h-screen bg-[#131313] text-[#e5e2e1] p-8 md:p-12">
+      <div className="min-h-screen bg-[#131313] p-8 text-[#e5e2e1] md:p-12">
         <header className="mb-12">
-           <button onClick={() => setEditingId(null)} className="mb-4 text-[#22C55E] flex items-center gap-2 hover:underline">
-             <span className="material-symbols-outlined">arrow_back</span> Back to Studio
-           </button>
-           <h1 className="text-4xl font-black uppercase tracking-tight">Lyric Editor</h1>
+          <button onClick={() => { setEditingId(null); setTitle(""); }} className="mb-4 flex items-center gap-2 text-[#22C55E] hover:underline">
+            <span className="material-symbols-outlined">arrow_back</span> Back to Studio
+          </button>
+          <h1 className="text-4xl font-black uppercase tracking-tight">Lyric Editor</h1>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
           <div className="space-y-6">
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-widest text-[#bccbb9]">Song Title</label>
-              <input 
-                value={title} 
-                onChange={e => setTitle(e.target.value)}
-                className="w-full bg-[#131313] border border-[#3d4a3d]/30 p-4 font-bold text-xl rounded-xl focus:border-[#22C55E] outline-none"
+              <input
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-4 text-xl font-bold outline-none focus:border-[#22C55E]"
               />
             </div>
             <div className="space-y-2">
               <label className="text-xs uppercase tracking-widest text-[#bccbb9]">Artist</label>
-              <input 
-                value={artist} 
-                onChange={e => setArtist(e.target.value)}
-                className="w-full bg-[#131313] border border-[#3d4a3d]/30 p-4 rounded-xl focus:border-[#22C55E] outline-none"
+              <input
+                value={artist}
+                onChange={(e) => setArtist(e.target.value)}
+                className="w-full rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-4 outline-none focus:border-[#22C55E]"
               />
             </div>
             <div className="pt-6">
-               <button onClick={onSave} className="w-full bg-[#22C55E] text-[#003915] font-black py-4 rounded-xl active:scale-95 transition-transform">
-                 SAVE TO LOCAL LIBRARY
-               </button>
+              <button onClick={onSave} className="w-full rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95">
+                SAVE TO DATABASE
+              </button>
             </div>
           </div>
 
-          <div className="space-y-4 flex flex-col">
-            <div className="flex justify-between items-end">
+          <div className="flex flex-col space-y-4">
+            <div className="flex items-end justify-between">
               <label className="text-xs uppercase tracking-widest text-[#bccbb9]">Lyrics (.LRC or .TXT format)</label>
-              <button onClick={onImportClick} className="text-[#22C55E] text-xs font-bold hover:underline">
+              <button onClick={onImportClick} className="text-xs font-bold text-[#22C55E] hover:underline">
                 IMPORT FILE
               </button>
               <input type="file" ref={fileInputRef} onChange={onFileChange} className="hidden" accept=".txt,.lrc" />
             </div>
-            <textarea 
+            <textarea
               value={rawLyrics}
-              onChange={e => setRawLyrics(e.target.value)}
+              onChange={(e) => setRawLyrics(e.target.value)}
               placeholder="[00:05.00] Line one\n[00:10.00] Line two..."
-              className="flex-1 min-h-[400px] bg-[#0a0a0a] border border-[#3d4a3d]/30 p-6 font-mono text-sm rounded-xl focus:border-[#22C55E] outline-none resize-none"
+              className="min-h-[400px] flex-1 resize-none rounded-xl border border-[#3d4a3d]/30 bg-[#0a0a0a] p-6 font-mono text-sm outline-none focus:border-[#22C55E]"
             />
           </div>
         </div>
@@ -123,46 +124,45 @@ export default function StudioScreen() {
   }
 
   return (
-    <div className="min-h-screen bg-[#131313] text-[#e5e2e1] p-8 md:p-12">
-      <header className="mb-12 flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
+    <div className="min-h-screen bg-[#131313] p-8 text-[#e5e2e1] md:p-12">
+      <header className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <h1 className="mb-2 text-5xl font-black uppercase tracking-tight">Studio</h1>
-          <p className="text-sm tracking-wide text-[#bccbb9]">LOCAL WORKSPACE & ASSET MANAGEMENT</p>
+          <p className="text-sm tracking-wide text-[#bccbb9]">DATABASE WORKSPACE & ASSET MANAGEMENT</p>
         </div>
-        <button onClick={onNew} className="rounded-xl bg-[#22C55E] px-8 py-3 font-bold text-[#003915] active:scale-95 transition-transform">
+        <button onClick={onNew} className="rounded-xl bg-[#22C55E] px-8 py-3 font-bold text-[#003915] transition-transform active:scale-95">
           CREATE NEW ASSET
         </button>
       </header>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
-        {songs.map(song => (
-          <div key={song.id} className="group relative bg-[#1a1a1a] border border-[#3d4a3d]/20 p-6 rounded-2xl hover:border-[#22C55E]/40 transition-all duration-300">
-            <h3 className="text-xl font-bold mb-1">{song.title}</h3>
-            <p className="text-sm text-[#bccbb9] mb-6 uppercase tracking-wider">{song.artist}</p>
+      <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
+        {songs.map((song) => (
+          <div key={song.id} className="group relative rounded-2xl border border-[#3d4a3d]/20 bg-[#1a1a1a] p-6 transition-all duration-300 hover:border-[#22C55E]/40">
+            <h3 className="mb-1 text-xl font-bold">{song.title}</h3>
+            <p className="mb-6 text-sm uppercase tracking-wider text-[#bccbb9]">{song.artist}</p>
             <div className="flex items-center gap-4">
-              <button 
+              <button
                 onClick={() => onEdit(song)}
-                className="flex-1 bg-[#2a2a2a] py-2 rounded-lg text-sm font-bold hover:bg-[#333] transition-colors"
+                className="flex-1 rounded-lg bg-[#2a2a2a] py-2 text-sm font-bold transition-colors hover:bg-[#333]"
                 title="Edit lyrics and metadata"
               >
                 EDIT
               </button>
-              <Link 
+              <Link
                 href={`/player?songId=${song.id}`}
-                className="flex-1 bg-[#22C55E]/10 py-2 rounded-lg text-sm font-bold text-[#22C55E] text-center hover:bg-[#22C55E]/20 transition-colors"
+                className="flex-1 rounded-lg bg-[#22C55E]/10 py-2 text-center text-sm font-bold text-[#22C55E] transition-colors hover:bg-[#22C55E]/20"
               >
                 PLAY
               </Link>
-              <button 
-                onClick={() => deleteSong(song.id)}
-                className="p-2 text-red-500/40 hover:text-red-500 transition-colors"
-                title="Delete local copy"
+              <button
+                onClick={() => deleteSong(song.id).catch(console.error)}
+                className="p-2 text-red-500/40 transition-colors hover:text-red-500"
+                title="Delete song"
               >
                 <span className="material-symbols-outlined">delete</span>
               </button>
             </div>
-            {/* Visual indicator for local overrides/custom songs */}
-            <div className="absolute top-4 right-4 h-2 w-2 rounded-full bg-[#22C55E] opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="absolute right-4 top-4 h-2 w-2 rounded-full bg-[#22C55E] opacity-0 transition-opacity group-hover:opacity-100" />
           </div>
         ))}
       </div>
