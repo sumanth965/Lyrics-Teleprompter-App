@@ -1,78 +1,80 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import defaultSongs from "../data/songs.json";
+import { parseLyrics } from "../utils/lyricParser";
 
-const STORAGE_KEY = "obsidian_stage_songs";
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api";
+
+function mapSongFromApi(song) {
+  return {
+    id: song._id,
+    title: song.title,
+    artist: song.artist,
+    rawLyrics: song.lyrics,
+    lyrics: parseLyrics(song.lyrics),
+  };
+}
 
 export default function useLocalStorageSongs() {
   const [songs, setSongs] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
-  // Load songs on mount
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    let customSongs = [];
-    if (stored) {
-      try {
-        customSongs = JSON.parse(stored);
-      } catch (e) {
-        console.error("Failed to parse stored songs", e);
-      }
+  const fetchSongs = useCallback(async () => {
+    const response = await fetch(`${API_BASE}/songs`, { cache: "no-store" });
+    if (!response.ok) {
+      throw new Error("Failed to load songs");
     }
-    
-    // Merge default songs with custom ones, ensuring IDs don't collide
-    const merged = [...defaultSongs];
-    customSongs.forEach(custom => {
-      const exists = merged.find(s => s.id === custom.id);
-      if (!exists) {
-        merged.push(custom);
-      } else {
-        // Overwrite default if custom version exists with same ID
-        const index = merged.findIndex(s => s.id === custom.id);
-        merged[index] = custom;
+
+    const data = await response.json();
+    setSongs(data.map(mapSongFromApi));
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await fetchSongs();
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoaded(true);
       }
+    })();
+  }, [fetchSongs]);
+
+  const saveSong = useCallback(async (song) => {
+    const payload = {
+      title: song.title,
+      artist: song.artist,
+      lyrics: song.rawLyrics || "",
+    };
+
+    const isUpdate = Boolean(song.id);
+    const endpoint = isUpdate ? `${API_BASE}/songs/${song.id}` : `${API_BASE}/songs`;
+    const method = isUpdate ? "PUT" : "POST";
+
+    const response = await fetch(endpoint, {
+      method,
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(payload),
     });
 
-    setSongs(merged);
-    setIsLoaded(true);
-  }, []);
+    if (!response.ok) {
+      throw new Error("Unable to save song");
+    }
 
-  const saveSong = useCallback((song) => {
-    setSongs((prev) => {
-      const idx = prev.findIndex((s) => s.id === song.id);
-      let nextSongs;
-      if (idx >= 0) {
-        nextSongs = [...prev];
-        nextSongs[idx] = song;
-      } else {
-        nextSongs = [...prev, song];
-      }
+    await fetchSongs();
+  }, [fetchSongs]);
 
-      // We only want to persist the CUSTOM (non-default) songs to localStorage
-      // or at least identify which ones are overrides.
-      // For simplicity, we'll store everything that isn't identical to defaults.
-      const customOnly = nextSongs.filter(s => {
-        const defaultMatch = defaultSongs.find(ds => ds.id === s.id);
-        return !defaultMatch || JSON.stringify(defaultMatch) !== JSON.stringify(s);
-      });
+  const deleteSong = useCallback(async (id) => {
+    const response = await fetch(`${API_BASE}/songs/${id}`, { method: "DELETE" });
+    if (!response.ok) {
+      throw new Error("Unable to delete song");
+    }
 
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(customOnly));
-      return nextSongs;
-    });
-  }, []);
+    await fetchSongs();
+  }, [fetchSongs]);
 
-  const deleteSong = useCallback((id) => {
-    setSongs((prev) => {
-      const nextSongs = prev.filter((s) => s.id !== id);
-      const customOnly = nextSongs.filter(s => {
-        const defaultMatch = defaultSongs.find(ds => ds.id === s.id);
-        return !defaultMatch || JSON.stringify(defaultMatch) !== JSON.stringify(s);
-      });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(customOnly));
-      return nextSongs;
-    });
-  }, []);
-
-  return { songs, isLoaded, saveSong, deleteSong };
+  return { songs, isLoaded, saveSong, deleteSong, refreshSongs: fetchSongs };
 }
