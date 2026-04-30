@@ -1,11 +1,21 @@
 "use client";
 
 import Link from "next/link";
+import { useMemo, useState } from "react";
 import SongCard from "../../components/SongCard";
 import { useSongs } from "../../contexts/SongsContext";
 
 export default function LibraryPage() {
   const { songs, isLoaded } = useSongs();
+  const [search, setSearch] = useState("");
+
+  const filteredSongs = useMemo(() => {
+    const query = search.trim().toLowerCase();
+    if (!query) return songs;
+    return songs.filter((song) =>
+      song.title.toLowerCase().includes(query) || song.artist.toLowerCase().includes(query)
+    );
+  }, [search, songs]);
 
   if (!isLoaded) {
     return <div className="bg-[#131313] min-h-screen text-[#e5e2e1] p-20">Loading Library...</div>;
@@ -37,12 +47,21 @@ export default function LibraryPage() {
           <header className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="mb-2 text-5xl font-black uppercase tracking-tight">Song Library</h1>
-              <p className="text-sm tracking-wide text-[#bccbb9]">1,248 ASSETS SYNCED ACROSS STUDIO</p>
+              <p className="text-sm tracking-wide text-[#bccbb9]">{filteredSongs.length} ASSETS AVAILABLE FROM DATASET</p>
             </div>
           </header>
 
+          <div className="mb-8">
+            <input
+              value={search}
+              onChange={(event) => setSearch(event.target.value)}
+              placeholder="Search by song title or artist..."
+              className="w-full rounded-xl border border-[#3d4a3d]/30 bg-[#131313] px-4 py-3 text-sm outline-none focus:border-[#22C55E]"
+            />
+          </div>
+
           <div className="grid grid-cols-1 gap-8 pb-24 md:grid-cols-2 xl:grid-cols-3">
-            {songs.map((song) => (
+            {filteredSongs.map((song) => (
               <SongCard key={song.id} song={song} />
             ))}
           </div>
