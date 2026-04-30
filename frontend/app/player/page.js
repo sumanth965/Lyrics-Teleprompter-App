@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import { Suspense } from "react";
 import PlayerScreen from "../../components/PlayerScreen";
 import { useSongs } from "../../contexts/SongsContext";
 
-export default function PlayerPage() {
+function PlayerContent() {
   const searchParams = useSearchParams();
   const { songs, isLoaded } = useSongs();
 
@@ -46,4 +47,16 @@ export default function PlayerPage() {
   }
 
   return <PlayerScreen key={songId} songId={songId} />;
+}
+
+export default function PlayerPage() {
+  return (
+    <Suspense fallback={
+      <main className="flex min-h-screen items-center justify-center bg-zinc-950 text-zinc-100">
+        <p>Loading Player Component...</p>
+      </main>
+    }>
+      <PlayerContent />
+    </Suspense>
+  );
 }
