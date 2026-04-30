@@ -11,7 +11,7 @@ import Controls from "./Controls";
 import AudioPlayer from "./AudioPlayer";
 
 export default function PlayerScreen({ songId, routeBase = "/player" }) {
-  const { songs } = useSongs();
+  const { songs, uploadAudio, removeAudio } = useSongs();
   const { settings, updateSettings, isSettingsLoaded } = useSettings();
   const selectedSong = useMemo(() => songs.find((song) => song.id === songId) ?? null, [songId, songs]);
   const lyrics = selectedSong?.lyrics ?? [];
@@ -48,6 +48,24 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   });
 
   const isAudioMissing = !audioSrc;
+
+  const onAudioUpload = useCallback(async (file) => {
+    if (!selectedSong) return;
+    try {
+      await uploadAudio(selectedSong.id, file);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [selectedSong, uploadAudio]);
+
+  const onAudioRemove = useCallback(async () => {
+    if (!selectedSong) return;
+    try {
+      await removeAudio(selectedSong.id);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [selectedSong, removeAudio]);
 
   const onPlayPause = useCallback(() => {
     if (isAudioMissing || !isAudioReady || audioError) return;
@@ -112,6 +130,10 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
       <AudioPlayer
         src={audioSrc}
         audioRef={audioRef}
+        songId={songId}
+        hasAudio={!isAudioMissing}
+        onUpload={onAudioUpload}
+        onRemove={isAudioMissing ? undefined : onAudioRemove}
         onTimeUpdate={handleTimeUpdate}
         onCanPlay={handleCanPlay}
         onLoadedMetadata={handleLoadedMetadata}

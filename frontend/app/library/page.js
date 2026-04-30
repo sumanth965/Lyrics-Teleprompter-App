@@ -47,7 +47,11 @@ export default function LibraryPage() {
           <header className="mb-12 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <div>
               <h1 className="mb-2 text-5xl font-black uppercase tracking-tight">Song Library</h1>
-              <p className="text-sm tracking-wide text-[#bccbb9]">{filteredSongs.length} ASSETS AVAILABLE FROM DATASET</p>
+              <p className="text-sm tracking-wide text-[#bccbb9]">
+                {search.trim()
+                  ? `${filteredSongs.length} OF ${songs.length} SONGS MATCHING`
+                  : `${songs.length} SONGS IN LIBRARY`}
+              </p>
             </div>
           </header>
 

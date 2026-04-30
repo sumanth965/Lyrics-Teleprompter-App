@@ -1,3 +1,5 @@
+const path = require("path");
+const fs = require("fs");
 const Song = require("../models/Song");
 
 const getSongs = async (req, res) => {
@@ -47,8 +49,55 @@ const deleteSong = async (req, res) => {
     return res.status(404).json({ message: "Song not found" });
   }
 
+  // Remove audio file if present
+  if (song.audioUrl) {
+    const filePath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+  }
+
   await song.deleteOne();
   res.json({ message: "Song deleted" });
+};
+
+const uploadAudio = async (req, res) => {
+  const song = await Song.findById(req.params.id);
+  if (!song) {
+    return res.status(404).json({ message: "Song not found" });
+  }
+
+  if (!req.file) {
+    return res.status(400).json({ message: "No audio file provided" });
+  }
+
+  // Remove old audio file if it exists and differs
+  if (song.audioUrl) {
+    const oldPath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
+    if (fs.existsSync(oldPath) && oldPath !== req.file.path) {
+      fs.unlinkSync(oldPath);
+    }
+  }
+
+  // Store as a root-relative URL: /uploads/audio/<filename>
+  song.audioUrl = `/uploads/audio/${req.file.filename}`;
+  await song.save();
+
+  res.json({ audioUrl: song.audioUrl, message: "Audio uploaded successfully" });
+};
+
+const deleteAudio = async (req, res) => {
+  const song = await Song.findById(req.params.id);
+  if (!song) {
+    return res.status(404).json({ message: "Song not found" });
+  }
+
+  if (song.audioUrl) {
+    const filePath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
+    if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+    song.audioUrl = null;
+    await song.save();
+  }
+
+  res.json({ message: "Audio removed" });
 };
 
 module.exports = {
@@ -57,4 +106,6 @@ module.exports = {
   createSong,
   updateSong,
   deleteSong,
+  uploadAudio,
+  deleteAudio,
 };

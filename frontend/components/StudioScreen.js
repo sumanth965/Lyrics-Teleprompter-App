@@ -6,7 +6,7 @@ import { parseLyrics } from "../utils/lyricParser";
 import Link from "next/link";
 
 export default function StudioScreen() {
-  const { songs, saveSong, deleteSong } = useSongs();
+  const { songs, saveSong, deleteSong, uploadAudio, removeAudio } = useSongs();
 
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
@@ -14,6 +14,8 @@ export default function StudioScreen() {
   const [rawLyrics, setRawLyrics] = useState("");
 
   const fileInputRef = useRef(null);
+  const audioInputRef = useRef(null);
+  const [uploadingId, setUploadingId] = useState(null);
 
   const onEdit = (song) => {
     setEditingId(song.id);
@@ -60,6 +62,18 @@ export default function StudioScreen() {
       }
     };
     reader.readAsText(file);
+  };
+
+  const onAudioUploadForSong = async (songId, file) => {
+    if (!file) return;
+    setUploadingId(songId);
+    try {
+      await uploadAudio(songId, file);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setUploadingId(null);
+    }
   };
 
   const formatTime = (seconds) => {
@@ -138,9 +152,18 @@ export default function StudioScreen() {
       <div className="grid grid-cols-1 gap-8 md:grid-cols-2 xl:grid-cols-3">
         {songs.map((song) => (
           <div key={song.id} className="group relative rounded-2xl border border-[#3d4a3d]/20 bg-[#1a1a1a] p-6 transition-all duration-300 hover:border-[#22C55E]/40">
-            <h3 className="mb-1 text-xl font-bold">{song.title}</h3>
+            <div className="mb-1 flex items-start justify-between">
+              <h3 className="text-xl font-bold">{song.title}</h3>
+              {/* Audio status dot */}
+              <span
+                className={`mt-1 h-2 w-2 rounded-full flex-shrink-0 ${
+                  song.audio ? "bg-[#22C55E]" : "bg-zinc-700"
+                }`}
+                title={song.audio ? "Audio attached" : "No audio"}
+              />
+            </div>
             <p className="mb-6 text-sm uppercase tracking-wider text-[#bccbb9]">{song.artist}</p>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3">
               <button
                 onClick={() => onEdit(song)}
                 className="flex-1 rounded-lg bg-[#2a2a2a] py-2 text-sm font-bold transition-colors hover:bg-[#333]"
@@ -154,6 +177,43 @@ export default function StudioScreen() {
               >
                 PLAY
               </Link>
+              {/* Audio upload / remove */}
+              <label
+                className={`cursor-pointer rounded-lg p-2 transition-colors ${
+                  uploadingId === song.id
+                    ? "text-zinc-500"
+                    : song.audio
+                    ? "text-[#22C55E] hover:bg-[#22C55E]/10"
+                    : "text-zinc-500 hover:text-[#22C55E] hover:bg-[#22C55E]/10"
+                }`}
+                title={song.audio ? "Replace audio" : "Upload audio"}
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
+                </svg>
+                <input
+                  type="file"
+                  className="hidden"
+                  accept="audio/*"
+                  disabled={uploadingId === song.id}
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) onAudioUploadForSong(song.id, file);
+                    e.target.value = "";
+                  }}
+                />
+              </label>
+              {song.audio && (
+                <button
+                  onClick={() => removeAudio(song.id).catch(console.error)}
+                  className="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-red-500/10 hover:text-red-400"
+                  title="Remove audio"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M18 6L6 18M6 6l12 12" />
+                  </svg>
+                </button>
+              )}
               <button
                 onClick={() => deleteSong(song.id).catch(console.error)}
                 className="p-2 text-red-500/40 transition-colors hover:text-red-500"

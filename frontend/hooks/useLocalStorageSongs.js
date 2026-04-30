@@ -5,6 +5,10 @@ import { parseLyrics } from "../utils/lyricParser";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
+const BACKEND_BASE = process.env.NEXT_PUBLIC_API_URL
+  ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, "")
+  : "http://localhost:5000";
+
 function mapSongFromApi(song) {
   return {
     id: song._id,
@@ -12,6 +16,7 @@ function mapSongFromApi(song) {
     artist: song.artist,
     rawLyrics: song.lyrics,
     lyrics: parseLyrics(song.lyrics),
+    audio: song.audioUrl ? `${BACKEND_BASE}${song.audioUrl}` : null,
   };
 }
 
@@ -76,5 +81,27 @@ export default function useLocalStorageSongs() {
     await fetchSongs();
   }, [fetchSongs]);
 
-  return { songs, isLoaded, saveSong, deleteSong, refreshSongs: fetchSongs };
+  const uploadAudio = useCallback(async (id, file) => {
+    const formData = new FormData();
+    formData.append("audio", file);
+    const response = await fetch(`${API_BASE}/songs/${id}/audio`, {
+      method: "POST",
+      body: formData,
+    });
+    if (!response.ok) {
+      throw new Error("Failed to upload audio");
+    }
+    await fetchSongs();
+  }, [fetchSongs]);
+
+  const removeAudio = useCallback(async (id) => {
+    const response = await fetch(`${API_BASE}/songs/${id}/audio`, { method: "DELETE" });
+    if (!response.ok) {
+      throw new Error("Failed to remove audio");
+    }
+    await fetchSongs();
+  }, [fetchSongs]);
+
+  return { songs, isLoaded, saveSong, deleteSong, uploadAudio, removeAudio, refreshSongs: fetchSongs };
+
 }

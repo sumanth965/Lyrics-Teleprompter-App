@@ -54,8 +54,9 @@ function parseCsv(content) {
 function normalizeLyrics(rawLyrics) {
   if (!rawLyrics) return "";
   return rawLyrics
+    .replace(/\r\n/g, "\n")
     .replace(/\r/g, "\n")
-    .split(/\n|\s{2,}/)
+    .split("\n")
     .map((line) => line.trim())
     .filter(Boolean)
     .join("\n");
@@ -78,6 +79,7 @@ function importDataset() {
     throw new Error("CSV is missing one of the required columns: Artist Name, Song Name, Lyrics");
   }
 
+  const MIN_LYRICS_LENGTH = 50;
   const songs = [];
   for (const dataRow of dataRows) {
     if (songs.length >= maxSongs) break;
@@ -85,6 +87,7 @@ function importDataset() {
     const artist = (dataRow[artistIndex] || "").trim();
     const lyrics = normalizeLyrics(dataRow[lyricsIndex] || "");
     if (!title || !artist || !lyrics) continue;
+    if (lyrics.length < MIN_LYRICS_LENGTH) continue;
     songs.push({ title, artist, lyrics });
   }
 

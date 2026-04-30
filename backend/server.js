@@ -1,4 +1,5 @@
 const express = require("express");
+const path = require("path");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const connectDB = require("./config/db");
@@ -7,10 +8,13 @@ const settingsRoutes = require("./routes/settingsRoutes");
 
 dotenv.config();
 
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
+
 
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
