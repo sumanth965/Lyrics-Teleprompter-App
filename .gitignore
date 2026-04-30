@@ -1,0 +1,40 @@
+# ─── Node ────────────────────────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# ─── Build outputs ───────────────────────────────────────
+.next/
+out/
+dist/
+build/
+
+# ─── Environment / secrets ───────────────────────────────
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# ─── Uploads (user audio files — not for git) ────────────
+backend/uploads/
+
+# ─── Audio / media files in root ─────────────────────────
+*.mp3
+*.wav
+*.ogg
+*.m4a
+*.flac
+*.aac
+*.mp4
+
+# ─── OS / editor ─────────────────────────────────────────
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# ─── Logs ────────────────────────────────────────────────
+*.log
+logs/
