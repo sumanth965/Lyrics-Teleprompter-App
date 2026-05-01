@@ -13,7 +13,7 @@ const app = express();
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://lyrics-teleprompter-app.vercel.app"
+  "https://lyrics-teleprompter.onrender.com"
 ];
 
 app.use(cors({

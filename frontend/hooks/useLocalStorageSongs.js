@@ -5,9 +5,11 @@ import { parseLyrics } from "../utils/lyricParser";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
-const BACKEND_BASE = process.env.NEXT_PUBLIC_API_URL
+// When in production, we might fetch from a different backend origin
+// If NEXT_PUBLIC_API_URL is just "/api", we assume it's a relative path on the same origin
+const BACKEND_BASE = (process.env.NEXT_PUBLIC_API_URL && process.env.NEXT_PUBLIC_API_URL !== "/api")
   ? process.env.NEXT_PUBLIC_API_URL.replace(/\/api$/, "")
-  : "http://localhost:5000";
+  : "";
 
 function mapSongFromApi(song) {
   return {
