@@ -5,32 +5,15 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const songRoutes = require("./routes/songRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const mongoose = require("mongoose");
 
 dotenv.config();
 
 const app = express();
 
-const allowedOrigins = [
-  "http://localhost:3000",
-  "https://lyrics-teleprompter.onrender.com",
-  "https://lyrics-teleprompter-app.vercel.app" // Just in case they use vercel
-];
-
+// Use permissive CORS for debugging production issues
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
-    
-    // Check if origin is in allowed list or is a subdomain of render.com
-    const isAllowed = allowedOrigins.indexOf(origin) !== -1 || 
-                     origin.endsWith(".onrender.com");
-    
-    if (!isAllowed) {
-      console.warn(`Blocked by CORS: ${origin}`);
-      return callback(new Error('Not allowed by CORS'), false);
-    }
-    return callback(null, true);
-  },
+  origin: true,
   credentials: true
 }));
 
@@ -38,14 +21,29 @@ app.use(express.json());
 
 // Log requests for debugging
 app.use((req, res, next) => {
-  console.log(`${req.method} ${req.url}`);
+  console.log(`${req.method} ${req.url} - Origin: ${req.headers.origin || 'none'}`);
+  next();
+});
+
+// Database connection check middleware
+app.use((req, res, next) => {
+  if (mongoose.connection.readyState !== 1) {
+    return res.status(503).json({ 
+      message: "Database connection not ready", 
+      state: mongoose.connection.readyState 
+    });
+  }
   next();
 });
 
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
 app.get("/api/health", (req, res) => {
-  res.json({ status: "ok", timestamp: new Date() });
+  res.json({ 
+    status: "ok", 
+    dbState: mongoose.connection.readyState,
+    timestamp: new Date() 
+  });
 });
 
 app.use("/api/songs", songRoutes);
@@ -68,4 +66,3 @@ connectDB().then(() => {
     console.log(`Server running on port ${PORT}`);
   });
 });
-
