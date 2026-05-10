@@ -1,4 +1,5 @@
 const Settings = require("../models/Settings");
+const catchAsync = require("../utils/catchAsync");
 
 const defaultSettings = {
   scrollSpeed: 1,
@@ -8,7 +9,7 @@ const defaultSettings = {
   autoScroll: true,
 };
 
-const getSettings = async (req, res) => {
+const getSettings = catchAsync(async (req, res) => {
   let settings = await Settings.findOne();
 
   if (!settings) {
@@ -16,9 +17,9 @@ const getSettings = async (req, res) => {
   }
 
   res.json(settings);
-};
+});
 
-const updateSettings = async (req, res) => {
+const updateSettings = catchAsync(async (req, res) => {
   const payload = req.body;
 
   let settings = await Settings.findOne();
@@ -34,9 +35,10 @@ const updateSettings = async (req, res) => {
 
   const saved = await settings.save();
   res.json(saved);
-};
+});
 
 module.exports = {
   getSettings,
   updateSettings,
 };
+
