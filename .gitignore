@@ -17,17 +17,11 @@ build/
 .env.test.local
 .env.production.local
 
-# ─── Uploads (user audio files — not for git) ────────────
-backend/uploads/
+# ─── Uploads (Exceptions for deployment) ──────────────────
+backend/uploads/*
+!backend/uploads/audio/
+!backend/uploads/audio/*.m4a
 
-# ─── Audio / media files in root ─────────────────────────
-*.mp3
-*.wav
-*.ogg
-*.m4a
-*.flac
-*.aac
-*.mp4
 
 # ─── OS / editor ─────────────────────────────────────────
 .DS_Store
