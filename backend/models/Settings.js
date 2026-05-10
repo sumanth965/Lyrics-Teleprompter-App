@@ -29,6 +29,11 @@ const settingsSchema = new mongoose.Schema(
       type: Boolean,
       default: true,
     },
+    syncOffset: {
+      type: Number,
+      default: 0,
+    },
+
   },
   { timestamps: true }
 );

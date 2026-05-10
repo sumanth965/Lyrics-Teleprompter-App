@@ -11,6 +11,7 @@ const fallbackSettings = {
   theme: "dark",
   lineSpacing: 1.6,
   autoScroll: true,
+  syncOffset: 0,
 };
 
 export function SettingsProvider({ children }) {
@@ -24,13 +25,15 @@ export function SettingsProvider({ children }) {
     }
     const data = await response.json();
     setSettings({
-      scrollSpeed: data.scrollSpeed,
-      fontSize: data.fontSize,
-      theme: data.theme,
-      lineSpacing: data.lineSpacing,
-      autoScroll: data.autoScroll,
+      scrollSpeed: data.scrollSpeed ?? fallbackSettings.scrollSpeed,
+      fontSize: data.fontSize ?? fallbackSettings.fontSize,
+      theme: data.theme ?? fallbackSettings.theme,
+      lineSpacing: data.lineSpacing ?? fallbackSettings.lineSpacing,
+      autoScroll: data.autoScroll ?? fallbackSettings.autoScroll,
+      syncOffset: data.syncOffset ?? fallbackSettings.syncOffset,
     });
   }, []);
+
 
   useEffect(() => {
     (async () => {

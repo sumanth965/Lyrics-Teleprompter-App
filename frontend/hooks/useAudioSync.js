@@ -3,7 +3,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { findActiveLyricIndex } from "../utils/timeHelper";
 
-export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetToken }) {
+export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetToken, syncOffset = 0 }) {
   const audioRef = useRef(null);
   const frameRef = useRef(null);
   const latestTimeRef = useRef(0);
@@ -13,7 +13,12 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [audioError, setAudioError] = useState(false);
 
-  const activeIndex = useMemo(() => findActiveLyricIndex(lyrics, currentTime), [lyrics, currentTime]);
+  // Apply syncOffset to the time passed to findActiveLyricIndex
+  const activeIndex = useMemo(() => {
+    const adjustedTime = Math.max(0, currentTime + syncOffset);
+    return findActiveLyricIndex(lyrics, adjustedTime);
+  }, [lyrics, currentTime, syncOffset]);
+
 
   const updatePlaybackState = useCallback(() => {
     const audio = audioRef.current;
@@ -30,15 +35,29 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
   }, [isPlaying]);
 
   const handleTimeUpdate = useCallback((nextTime) => {
-    latestTimeRef.current = nextTime;
+    // Only update if not polling (e.g. initial load or manual seek)
+    if (!isPlaying) {
+      setCurrentTime(nextTime);
+    }
+  }, [isPlaying]);
 
-    if (frameRef.current) return;
+  // High-precision polling loop
+  useEffect(() => {
+    if (!isPlaying) return;
 
-    frameRef.current = requestAnimationFrame(() => {
-      setCurrentTime(latestTimeRef.current);
-      frameRef.current = null;
-    });
-  }, []);
+    let rafId;
+    const poll = () => {
+      const audio = audioRef.current;
+      if (audio) {
+        setCurrentTime(audio.currentTime);
+      }
+      rafId = requestAnimationFrame(poll);
+    };
+
+    rafId = requestAnimationFrame(poll);
+    return () => cancelAnimationFrame(rafId);
+  }, [isPlaying]);
+
 
   const handleLoadedMetadata = useCallback((event) => {
     const nextDuration = Number(event.currentTarget.duration) || 0;

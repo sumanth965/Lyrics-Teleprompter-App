@@ -40,7 +40,9 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
     isPlaying,
     playbackRate: speed,
     resetToken,
+    syncOffset: settings.syncOffset,
   });
+
 
   const { containerRef, followElement, restartScroll } = useScroll({
     isPlaying: settings.autoScroll && isPlaying,
@@ -251,7 +253,25 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
                 />
               </div>
 
+              <div className="space-y-2">
+                <div className="flex justify-between text-sm">
+                  <span className="text-zinc-400">Sync Offset</span>
+                  <span className="font-mono text-green-400">{(settings.syncOffset || 0).toFixed(2)}s</span>
+                </div>
+                <input
+                  type="range"
+                  min="-2"
+                  max="2"
+                  step="0.05"
+                  value={settings.syncOffset || 0}
+                  onChange={(e) => updateSettings({ syncOffset: Number(e.target.value) }).catch(console.error)}
+                  className="w-full accent-green-500"
+                />
+                <p className="text-[10px] text-zinc-500 italic">Adjust if lyrics are too early or late</p>
+              </div>
+
               <div className="flex gap-3">
+
                 <button
                   onClick={() => updateSettings({ theme: settings.theme === "dark" ? "light" : "dark" }).catch(console.error)}
                   className="flex-1 rounded-xl border border-zinc-700 py-3 text-sm font-medium transition hover:bg-zinc-800"

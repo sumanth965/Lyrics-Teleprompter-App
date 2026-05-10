@@ -51,9 +51,11 @@ export default function useScroll({ isPlaying, speed = 1 }) {
       }
 
       if (!isUserScrollingRef.current) {
-        const easingFactor = Math.min(0.08 * speed, 0.35);
+        // Increased easing for snappier response to lyric changes
+        const easingFactor = Math.min(0.15 * speed, 0.5);
         container.scrollTop = smoothStep(container.scrollTop, targetScrollRef.current, easingFactor);
       }
+
       
       rafRef.current = requestAnimationFrame(tick);
     };
