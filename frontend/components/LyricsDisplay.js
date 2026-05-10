@@ -22,7 +22,8 @@ function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48,
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-[35vh] text-center">
+    <div className="scrolling-content mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-[45vh] text-center">
+
       {lyrics.map((line, index) => (
         <p
           key={`${line.time}-${index}`}
