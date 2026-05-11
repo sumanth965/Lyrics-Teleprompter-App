@@ -8,7 +8,7 @@ export default function SongCard({ song }) {
     >
       <div className="flex gap-6">
         <div className="relative h-32 w-32 shrink-0 overflow-hidden rounded-lg shadow-lg">
-          <img alt={song.title} src={song.image} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
+          <img alt={`${song.title} by ${song.artist} cover art`} src={song.image || "/song-cover.svg"} className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110" />
           <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity group-hover:opacity-100">
             <span className="material-symbols-outlined text-4xl text-[#4be277]">play_circle</span>
           </div>

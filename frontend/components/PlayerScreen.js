@@ -20,6 +20,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const [speed, setSpeed] = useState(settings.scrollSpeed);
   const [isPlaying, setIsPlaying] = useState(false);
   const [resetToken, setResetToken] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
 
 
   const {
@@ -127,8 +128,6 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
 
   const controlsDisabled = isAudioMissing || !isAudioReady || audioError;
 
-  const [showSettings, setShowSettings] = useState(false);
-
   return (
     <div className={`relative h-screen overflow-hidden ${settings.theme === "dark" ? "bg-black text-white" : "bg-white text-zinc-950"}`}>
       {/* Hidden Audio Element for Logic */}
@@ -200,7 +199,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
           <div className="space-y-6">
             <div className="flex items-center justify-between">
               <h2 className="text-lg font-bold text-white">Stage Settings</h2>
-              <button onClick={() => setShowSettings(false)} className="text-zinc-400 hover:text-white">
+              <button onClick={() => setShowSettings(false)} aria-label="Close settings panel" className="text-zinc-400 hover:text-white">
                 <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l18 18" /></svg>
               </button>
             </div>
@@ -298,6 +297,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
                     </div>
                     <button
                       onClick={onAudioRemove}
+                      aria-label="Remove audio source"
                       className="rounded-lg bg-red-500/10 px-3 py-1.5 text-xs font-bold text-red-400 transition hover:bg-red-500 hover:text-white"
                     >
                       Remove

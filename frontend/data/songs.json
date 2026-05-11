@@ -6,14 +6,29 @@
     "bpm": 128,
     "key": "Am",
     "time": "04:22",
-    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuB49aw64LjMwp7QFoZWBSn9QM_Qw7btChsXE3pK4uqekHo-dfOsfALyHAA5ArKEQSF0m4zoLanZVgVqROvSWX627Cluarh8n-qtRsooVR-dWhXlsyhV13qwcTFf14ufcNUpoEX-H6rLiW0KphM3HBsmEPA017m7GgYJeA07TEbA74wCWfsQwk0GtX-iY4FHSH2348guLCa4due2tZNyYNxRbrbgxev46ZcCuzNi4wT3OeZoJEjbVIaRBuwFClV5bi02PGTHDdad4EJR",
+    "image": "/song-cover-1.svg",
     "audio": "/audio/sample.mp3",
     "lyrics": [
-      { "time": 0, "text": "When the lights go down, we start to breathe." },
-      { "time": 5, "text": "Hold the first note, let it settle in the room." },
-      { "time": 10, "text": "Step by step, the rhythm carries every line." },
-      { "time": 15, "text": "Sing it clear, keep your eyes on the story." },
-      { "time": 20, "text": "Take it home with heart and harmony." }
+      {
+        "time": 0,
+        "text": "When the lights go down, we start to breathe."
+      },
+      {
+        "time": 5,
+        "text": "Hold the first note, let it settle in the room."
+      },
+      {
+        "time": 10,
+        "text": "Step by step, the rhythm carries every line."
+      },
+      {
+        "time": 15,
+        "text": "Sing it clear, keep your eyes on the story."
+      },
+      {
+        "time": 20,
+        "text": "Take it home with heart and harmony."
+      }
     ]
   },
   {
@@ -23,14 +38,29 @@
     "bpm": 115,
     "key": "F#m",
     "time": "03:58",
-    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDz3nA1OsTLuSDuBXJ08myN1hO15go3AJ_LgSMe4cFkxivDBsgYWCmlKrmh1o9YKd_tHomsVb8b9M-sOIB52i8Qk1tNbnkb9-Nev6e6N5h1DedJZoJj1nCMQ8ZcMmPJxpzaHq_VjoDkERROF8Ktq9t5LKnCOdRT3OiyXjoarcikXyWCsa7S6rrZJene57tHRZScQ63FmSkzgbLpEj5_UzeQEAKcYJI5G8fy40tpoybaDIP7N5R_wVUh8wHYTzIZQ89F38jnZ-H1EiiV",
+    "image": "/song-cover-2.svg",
     "audio": "/audio/midnight-echo.mp3",
     "lyrics": [
-      { "time": 0, "text": "Midnight sky and a quiet street below." },
-      { "time": 4, "text": "Echoes of your voice begin to glow." },
-      { "time": 9, "text": "Every verse is floating in the dark." },
-      { "time": 14, "text": "Find the chorus, sing it from the heart." },
-      { "time": 19, "text": "Let it fade, but leave a little spark." }
+      {
+        "time": 0,
+        "text": "Midnight sky and a quiet street below."
+      },
+      {
+        "time": 4,
+        "text": "Echoes of your voice begin to glow."
+      },
+      {
+        "time": 9,
+        "text": "Every verse is floating in the dark."
+      },
+      {
+        "time": 14,
+        "text": "Find the chorus, sing it from the heart."
+      },
+      {
+        "time": 19,
+        "text": "Let it fade, but leave a little spark."
+      }
     ]
   }
 ]
