@@ -1,7 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 
-const datasetPath = path.resolve(__dirname, "../../LYRICS_DATASET.csv");
+const datasetDir = path.resolve(__dirname, "../data/datasets");
+const datasetCsvPath = path.join(datasetDir, "LYRICS_DATASET.csv");
+const datasetTxtPath = path.join(datasetDir, "lyrics_dataset.txt");
 const outputPath = path.resolve(__dirname, "../data/songs.json");
 const maxSongs = Number(process.env.MAX_IMPORT_SONGS || 250);
 
@@ -63,11 +65,11 @@ function normalizeLyrics(rawLyrics) {
 }
 
 function importDataset() {
-  if (!fs.existsSync(datasetPath)) {
-    throw new Error(`Dataset not found at ${datasetPath}`);
+  if (!fs.existsSync(datasetCsvPath)) {
+    throw new Error(`CSV dataset not found at ${datasetCsvPath}`);
   }
 
-  const content = fs.readFileSync(datasetPath, "utf8");
+  const content = fs.readFileSync(datasetCsvPath, "utf8");
   const rows = parseCsv(content);
   const [header, ...dataRows] = rows;
 
@@ -89,6 +91,17 @@ function importDataset() {
     if (!title || !artist || !lyrics) continue;
     if (lyrics.length < MIN_LYRICS_LENGTH) continue;
     songs.push({ title, artist, lyrics });
+  }
+
+  if (fs.existsSync(datasetTxtPath)) {
+    const textLyrics = normalizeLyrics(fs.readFileSync(datasetTxtPath, "utf8"));
+    if (textLyrics.length >= MIN_LYRICS_LENGTH) {
+      songs.unshift({
+        title: "Lyrics Dataset Text Sample",
+        artist: "Imported Dataset",
+        lyrics: textLyrics,
+      });
+    }
   }
 
   fs.writeFileSync(outputPath, JSON.stringify(songs, null, 2));
