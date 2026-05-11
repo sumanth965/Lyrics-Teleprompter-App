@@ -19,20 +19,27 @@ export function SettingsProvider({ children }) {
   const [isSettingsLoaded, setIsSettingsLoaded] = useState(false);
 
   const fetchSettings = useCallback(async () => {
-    const response = await fetch(`${API_BASE}/settings`, { cache: "no-store" });
-    if (!response.ok) {
-      throw new Error("Failed to fetch settings");
+    try {
+      const response = await fetch(`${API_BASE}/settings`, { cache: "no-store" });
+      if (!response.ok) {
+        console.warn(`Settings fetch failed with status ${response.status}. Using defaults.`);
+        return;
+      }
+      const data = await response.json();
+      setSettings({
+        scrollSpeed: data.scrollSpeed ?? fallbackSettings.scrollSpeed,
+        fontSize: data.fontSize ?? fallbackSettings.fontSize,
+        theme: data.theme ?? fallbackSettings.theme,
+        lineSpacing: data.lineSpacing ?? fallbackSettings.lineSpacing,
+        autoScroll: data.autoScroll ?? fallbackSettings.autoScroll,
+        syncOffset: data.syncOffset ?? fallbackSettings.syncOffset,
+      });
+    } catch (error) {
+      console.error("Settings fetch error:", error.message);
+      // Fallback to defaults already in state
     }
-    const data = await response.json();
-    setSettings({
-      scrollSpeed: data.scrollSpeed ?? fallbackSettings.scrollSpeed,
-      fontSize: data.fontSize ?? fallbackSettings.fontSize,
-      theme: data.theme ?? fallbackSettings.theme,
-      lineSpacing: data.lineSpacing ?? fallbackSettings.lineSpacing,
-      autoScroll: data.autoScroll ?? fallbackSettings.autoScroll,
-      syncOffset: data.syncOffset ?? fallbackSettings.syncOffset,
-    });
   }, []);
+
 
 
   useEffect(() => {
