@@ -1,36 +1,58 @@
 [
   {
-    "id": 1,
-    "title": "Sample Song",
-    "artist": "Artist",
-    "bpm": 128,
-    "key": "Am",
-    "time": "04:22",
-    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuB49aw64LjMwp7QFoZWBSn9QM_Qw7btChsXE3pK4uqekHo-dfOsfALyHAA5ArKEQSF0m4zoLanZVgVqROvSWX627Cluarh8n-qtRsooVR-dWhXlsyhV13qwcTFf14ufcNUpoEX-H6rLiW0KphM3HBsmEPA017m7GgYJeA07TEbA74wCWfsQwk0GtX-iY4FHSH2348guLCa4due2tZNyYNxRbrbgxev46ZcCuzNi4wT3OeZoJEjbVIaRBuwFClV5bi02PGTHDdad4EJR",
-    "audio": "/audio/sample.mp3",
-    "lyrics": [
-      { "time": 0, "text": "When the lights go down, we start to breathe." },
-      { "time": 5, "text": "Hold the first note, let it settle in the room." },
-      { "time": 10, "text": "Step by step, the rhythm carries every line." },
-      { "time": 15, "text": "Sing it clear, keep your eyes on the story." },
-      { "time": 20, "text": "Take it home with heart and harmony." }
-    ]
+    "title": "Namo Namo",
+    "artist": "Amit Trivedi (Kedarnath)",
+    "lyrics": "[00:00.00] Jai Ho, Jai Ho Shankara\n[00:09.00] Bholenath Shankara\n[00:14.00] Aadi Dev Shankara\n[00:18.00] Hey Shivay Shankara\n[00:23.00] Tere Jaap Ke Bina\n[00:27.00] Bholenath Shankara\n[00:32.00] Chale Ye Saans Kis Tarah?\n[00:36.00] Hey Shivay Shankara\n[00:41.00] Mera Karm Tu Hi Jaane, Kya Bura Hai Kya Bhala\n[00:50.00] Tere Raaste Pe Main To Aankh Moond Ke Chala\n[00:59.00] Tere Naam Ki Jot Ne, Saara Har Liya Tamas Mera\n[01:08.00] Namo-Namo Ji Shankara, Bholenath Shankara\n[01:17.00] Hey Triloknath Shambhu, Hey Shivay Shankara\n[01:26.00] Namo-Namo Ji Shankara, Bholenath Shankara\n[01:34.00] Rudradev Hey Maheshvara",
+    "audioUrl": "/uploads/audio/Namo_Namo(128k).m4a"
   },
   {
-    "id": 2,
-    "title": "Midnight Echo",
-    "artist": "Nova Lane",
-    "bpm": 115,
-    "key": "F#m",
-    "time": "03:58",
-    "image": "https://lh3.googleusercontent.com/aida-public/AB6AXuDz3nA1OsTLuSDuBXJ08myN1hO15go3AJ_LgSMe4cFkxivDBsgYWCmlKrmh1o9YKd_tHomsVb8b9M-sOIB52i8Qk1tNbnkb9-Nev6e6N5h1DedJZoJj1nCMQ8ZcMmPJxpzaHq_VjoDkERROF8Ktq9t5LKnCOdRT3OiyXjoarcikXyWCsa7S6rrZJene57tHRZScQ63FmSkzgbLpEj5_UzeQEAKcYJI5G8fy40tpoybaDIP7N5R_wVUh8wHYTzIZQ89F38jnZ-H1EiiV",
-    "audio": "/audio/midnight-echo.mp3",
-    "lyrics": [
-      { "time": 0, "text": "Midnight sky and a quiet street below." },
-      { "time": 4, "text": "Echoes of your voice begin to glow." },
-      { "time": 9, "text": "Every verse is floating in the dark." },
-      { "time": 14, "text": "Find the chorus, sing it from the heart." },
-      { "time": 19, "text": "Let it fade, but leave a little spark." }
-    ]
+    "title": "Motion Sickness",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "I hate you for what you did And I miss you like a little kid I faked it every time But that's alright I can hardly feel anything I hardly feel anything at all   You gave me fifteen hundred To see your hypnotherapist I only went one time You let it slide Fell on hard times a year ago Was hoping you would let it go, and you did   I have emotional motion sickness Somebody roll the windows down There are no words in the English language I could scream to drown you out   I'm on the outside looking through You're throwing rocks around your room And while you're bleeding on your back In the glass I'll be glad that I made it out And sorry that it all went down like it did   I have emotional motion sickness Somebody roll the windows down There are no words in the English language I could scream to drown you out Hey, why do you sing with an English accent? I guess it's too late to change it now You know I'm never gonna let you have it But I will try to drown you out   You said when you met me, you were bored You said when you met me, you were bored And you, you were in a band when I was born   I have emotional motion sickness I try to stay clean and live without And I want to know what would happen If I surrender to the sound Surrender to the sound"
+  },
+  {
+    "title": "Killer",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Sometimes I think I'm a killer I scared you in your house I even scared myself by talking About Dahmer on your couch But I can't sleep next to a body Even harmless in death Plus, I'm pretty sure I'd miss you And faking sleep to count your breath   Can the killer in me Tame the fire in you? Or is there nothing left to do for us? I am sick of the chase But I'm hungry for blood And there's nothing I can do   But when I'm sick and tired And when my mind is barely there When a machine keeps me alive And I'm losing all my hair I hope you kiss my rotten head And pull the plug Know that I've burned every playlist And I've given all my love   Can the killer in me Tame the fire in you? I know there's something waiting for us I am sick of the chase But I'm stupid in love And there's nothing I can do And there's nothing I can do"
+  },
+  {
+    "title": "Georgia",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Georgia, Georgia, I love your son And when he gets older, he might be the one He might be the one Georgia, Georgia, he has beautiful bones And he never lies or picks up his phone   And sometimes in the pouring rain He'll fall in the mud and get back up again   And if you find me, will you know me? Will you take me, or will you fall?   Here is my day plan, here's my new machine He is a fine new addition, so young and so clean So young and so clean He came up through the water without a sound With my back to the shoreline, I dreamt that he drowned I dreamt that he drowned   And sometimes, when he looks at me I know he needs you, you're all that he sees   And if I breathe you, will it kill me? Will you have me, or watch me fall? If I fix you, will you hate me? And would you fuck this and let us fall?"
+  },
+  {
+    "title": "Kyoto",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Day off in Kyoto Got bored at the temple Looked around at the 7-Eleven The band took the speed train Went to the arcade I wanted to go, but I didn't You called me from a payphone They still got payphones It costs a dollar a minute To tell me you're getting sober And you wrote me a letter But I don't have to read it   I'm gonna kill you If you don't beat me to it Dreaming through Tokyo skies I wanted to see the world Then I flew over the ocean And I changed my mind (Woo)   Sunset's been a freak show On the weekend, so I've been driving out to the suburbs To park at the Goodwill And stare at the chem trails With my little brother He said you called on his birthday You were off by like ten days But you get a few points for tryin' Remember getting the truck fixed When you let us drive it 25 felt like flying   I don't forgive you But please don't hold me to it Born under Scorpio skies I wanted to see the world Through your eyes until it happened Then I changed my mind   Guess I lied I'm a liar Who lies 'Cause I'm a liar"
+  },
+  {
+    "title": "Would You Rather",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Playing \"would you rather\" When it comes to fire You always say that you'd prefer to drown You were still in the ambulance When the cop suggested you're the one Who tried to burn it down   Come to find out I'm a can on a string, you're on the end We found our way out Of the suicide pact of our family and friends In the background, I'll be waiting   We have the same face I laid awake as someone shoved you Up against a wall Quarantined in a bad dream He's half the man And you're twice as tall   Come to find out I'm a can on a string, you're on the end We found our way out Of the suicide pact of our family and friends In the background, I'll be waiting   Next time I see you, you'll show me A hundred different ways to say the same things   Come to find out I'm a can on a string, you're on the end We found our way out Of the suicide pact of our family and friends And when you touchdown, I'll be waving"
+  },
+  {
+    "title": "Killer + The Sound",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Sometimes I think I'm a killer Scared you in your house Even scared myself by talking About Dahmer on your couch   But I can't sleep next to a body Even harmless in death Plus I'm pretty sure I'd miss you Faking sleep to count your breath   Can the killer in me Tame the fire in you? Is there nothing left to do for us? I am sick of the chase But I'm hungry for blood And there's nothing I can do   But when I'm sick and tired When my mind is barely there When a machine keeps me alive And I'm losing all my hair   I hope you kiss my rotten head And pull the plug Know that I've burned every playlist And given all my love   Can the killer in me Tame the fire in you? I know there's something waiting for us I am sick of the chase But I'm stupid in love And there's nothing I can do And there's nothing I can do     Nothing ever comes like it did when you were in it Just a memory of a kid, just a washed out finish Just a pain-in-the-ass Johnny Cash middle finger No shooting up drugs, no quitter is a winner   Nothing ever comes like it did when you were in it Keeping nothing for yourself like a stone cold killer Now you're passing your people like a ship in the night Looking to every stranger for a fight   Nothing ever comes, ever comes if you call it Choking like a dog, like a dog on a collar Open up your mouth, your mouth if you want it Listen for the sound, the sound, the sound is coming down   Hoping that you like, that you like how you're living Relying on the kindness of strangers that you will be forgiven How many times, how many times will you shit on what you're given? How many times, how many times 'til you shut up and listen?   Nothing ever comes, ever comes if you call it Choking like a dog, like a dog on a collar Open up your mouth, your mouth if you want it Listen for the sound, the sound, the sound is coming down   Nothing ever comes, ever comes Choking like a dog, like a dog Open up your mouth Listen for the sound, the sound, the sound is coming down   Nothing ever comes, ever comes if you call it Choking like a dog, like a dog on a collar Open up your mouth if you want it Listen for the sound, the sound, the sound is coming down"
+  },
+  {
+    "title": "Chelsea",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "For a chemical imbalance You sure know how to ride a train Your revolution is a deathbed And the music is your maid When someone comes a-knockin' With a needle on a tray Only your lonesome lies beside you For you told me not to stay   You are somebody's baby Some mother held you near No, it's not important, they're just pretty words, my dear There is no distraction that can make me disappear No, there's nothing that won't remind you I will always be right here   And you spit the blood back Spit the blood back, baby I'm amazed that you're alright Oh, so long, prison boy I won't be home with you tonight   We're both very sick, our muscles are worn down It's as if we are one-hundred, know I won't still be around Because I've fallen Yes, I've fallen right into the love I've found Long before I reach one-hundred I'll have fallen to the ground   And for generations, they'll romance us, make us more Or much less than ever was before The Chelsea and the floor Make us stand before the masses Like two speakers for the poor When there was no revolution Nothing we were fighting for   And you spit the blood back Spit the blood back, baby I'm amazed that you're alright Oh, so long, prison boy I won't be home, I won't be home I won't be home with you tonight   And you can call the service bell When we stay at the Chelsea Hotel And I'll stay out of my own hell   Oh, so long, prison boy I won't be home, I won't be home I won't be home with you tonight Tonight"
+  },
+  {
+    "title": "I See You",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Laying down on the lawn I'm tired of trying to get in the house I'm thinking out loud I've been playing dead my whole life And I get this feeling whenever I feel good It'll be the last time   But I feel something when I see you now I feel something when I see you   If you're a work of art, I'm standing too close I can see the brush strokes I hate your mom I hate it when she opens her mouth It's amazing to me how much you can say When you don't know what you're talking about   But I feel something when I see you now I feel something when I see you   I used to light you up Now I can't even get you to play the drums 'Cause I don't know what I want Until I fuck it up   But I feel something when I see you now I feel something   I'll climb through the window again But right now it feels good not to stand Then I'll leave it wide open Let the dystopian morning light pour in"
+  },
+  {
+    "title": "Christmas Song",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "Comin' back from the country For the good food and lousy beer This winter's so dry and the dirt road so dusty At the lightest fall of rain, the bacteria bloom   You don't have to be alone to be lonesome It's easy to forget The sadness comes crashin' like a brick through the window And it's Christmas so no one can fix it   Tethered to a table with that happy holiday crowd And it's anchors aweigh Looks like smooth sailin' But the merest hint of waves could capsize you   You don't have to be alone to be lonesome It's easy to forget The sadness comes crashin' like a brick through the window And it's Christmas so no one can fix it   The desire for annihilation Is as common as it is unkind And it's hard to recognize the situation When you're desperately tryin' to have a good time   You don't have to be alone to be lonesome It's easy to forget The sadness comes crashin' like a brick through the window And it's Christmas so no one can fix it   Yeah, it's Christmas So no one can fix it"
+  },
+  {
+    "title": "Prayer In Open D",
+    "artist": "Phoebe Bridgers",
+    "lyrics": "There's a valley of sorrow in my soul Where every night I hear the thunder roll Like the sound of a distant gun Over all the damage I have done  And the shadows filling up this land Are the ones I built with my own hand There is no comfort from the cold Of this valley of sorrow in my soul  There's a river of darkness in my blood And through every vein I feel the flood I can find no bridge for me to cross No way to bring back what is lost  Into the night it soon will sweep Down where all my grievances I keep But it won't wash away the years Or one single hard and bitter tear  And the rock of ages I have known Is a weariness down in the bone I used to ride it like a rolling stone Now I just carry it alone  There's a highway risin' from my dreams Deep in the heart I know it gleams For I have seen it stretching wide Clear across to the other side  Beyond the river and the flood And the valley where for so long I've stood With the rock of ages in my bones Someday I know it will lead me home. oh, oh, oh..."
   }
 ]
