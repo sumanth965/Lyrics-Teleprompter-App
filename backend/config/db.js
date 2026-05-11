@@ -15,11 +15,11 @@ const connectDB = async () => {
     console.log("MongoDB Connected Successfully");
   } catch (error) {
     console.error("MongoDB Connection Error:", error.message);
-    // In production, we might want to keep the process alive if we have a retry strategy,
-    // but for now, exiting is the standard behavior for fatal DB failure.
-    process.exit(1);
+    // Removed process.exit(1) to allow the app to stay alive and return 503 via middleware
+    // This helps in production debugging and prevents restart loops.
   }
 };
+
 
 module.exports = connectDB;
 
