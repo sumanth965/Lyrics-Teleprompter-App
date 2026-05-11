@@ -101,6 +101,64 @@ const deleteAudio = catchAsync(async (req, res) => {
   res.json({ message: "Audio removed" });
 });
 
+const autoSync = catchAsync(async (req, res) => {
+  const song = await Song.findById(req.params.id);
+  if (!song || !song.audioUrl) {
+    return res.status(400).json({ message: "Song or audio file missing" });
+  }
+
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === "your_openai_api_key_here") {
+    return res.status(400).json({ 
+      message: "OpenAI API Key is missing. Please add it to your .env file and restart the server." 
+    });
+  }
+
+  const { OpenAI } = require("openai");
+  const openai = new OpenAI({ apiKey });
+
+  const audioPath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
+  
+  if (!fs.existsSync(audioPath)) {
+    return res.status(404).json({ message: "Audio file not found on server" });
+  }
+
+  try {
+    const transcription = await openai.audio.transcriptions.create({
+      file: fs.createReadStream(audioPath),
+      model: "whisper-1",
+      response_format: "verbose_json",
+      timestamp_granularities: ["segment"],
+    });
+
+    const lrcLyrics = transcription.segments.map(segment => {
+      const time = segment.start;
+      const mins = Math.floor(time / 60).toString().padStart(2, "0");
+      const secs = (time % 60).toFixed(2).padStart(5, "0");
+      return `[${mins}:${secs}] ${segment.text.trim()}`;
+    }).join("\n");
+
+    song.lyrics = lrcLyrics;
+    await song.save();
+
+    res.json({ lyrics: lrcLyrics, message: "AI Sync complete" });
+  } catch (error) {
+    console.error("AI Sync Error:", error);
+    
+    let userMessage = "AI transcription failed.";
+    if (error.status === 429) {
+      userMessage = "OpenAI Quota Exceeded. Please check your billing/balance at platform.openai.com.";
+    } else if (error.status === 401) {
+      userMessage = "Invalid OpenAI API Key. Please check your .env file.";
+    }
+
+    res.status(error.status || 500).json({ 
+      message: userMessage, 
+      error: error.message 
+    });
+  }
+});
+
 module.exports = {
   getSongs,
   getSongById,
@@ -109,5 +167,6 @@ module.exports = {
   deleteSong,
   uploadAudio,
   deleteAudio,
+  autoSync,
 };
 

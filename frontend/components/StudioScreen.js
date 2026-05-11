@@ -6,7 +6,7 @@ import { parseLyrics } from "../utils/lyricParser";
 import Link from "next/link";
 
 export default function StudioScreen() {
-  const { songs, saveSong, deleteSong, uploadAudio, removeAudio } = useSongs();
+  const { songs, saveSong, deleteSong, uploadAudio, removeAudio, autoSync } = useSongs();
 
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
@@ -214,12 +214,38 @@ export default function StudioScreen() {
                   </svg>
                 </button>
               )}
+              {/* AI Auto-Sync Button */}
+              {song.audio && (
+                <button
+                  onClick={async () => {
+                    if (uploadingId) return;
+                    setUploadingId(song.id);
+                    try {
+                      await autoSync(song.id);
+                      alert("AI Sync complete!");
+                    } catch (err) {
+                      alert(err.message);
+                    } finally {
+                      setUploadingId(null);
+                    }
+                  }}
+                  disabled={uploadingId === song.id}
+                  className={`rounded-lg p-2 transition-all ${
+                    uploadingId === song.id
+                      ? "animate-pulse text-[#22C55E]"
+                      : "text-zinc-500 hover:bg-[#22C55E]/10 hover:text-[#22C55E]"
+                  }`}
+                  title="AI Auto-Sync (Beta)"
+                >
+                  <span className="material-symbols-outlined text-[18px]">auto_fix_high</span>
+                </button>
+              )}
               <button
                 onClick={() => deleteSong(song.id).catch(console.error)}
                 className="p-2 text-red-500/40 transition-colors hover:text-red-500"
                 title="Delete song"
               >
-                <span className="material-symbols-outlined">delete</span>
+                <span className="material-symbols-outlined text-[18px]">delete</span>
               </button>
             </div>
             <div className="absolute right-4 top-4 h-2 w-2 rounded-full bg-[#22C55E] opacity-0 transition-opacity group-hover:opacity-100" />

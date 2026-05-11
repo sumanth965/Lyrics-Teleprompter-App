@@ -104,6 +104,23 @@ export default function useLocalStorageSongs() {
     await fetchSongs();
   }, [fetchSongs]);
 
-  return { songs, isLoaded, saveSong, deleteSong, uploadAudio, removeAudio, refreshSongs: fetchSongs };
+  const autoSync = useCallback(async (id) => {
+    const response = await fetch(`${API_BASE}/songs/${id}/auto-sync`, { method: "POST" });
+    
+    if (!response.ok) {
+      // Safely try to parse JSON, or fallback to status text
+      const contentType = response.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const data = await response.json();
+        throw new Error(data.message || "AI Sync failed");
+      } else {
+        throw new Error(`Server Error: ${response.statusText} (${response.status})`);
+      }
+    }
+    
+    await fetchSongs();
+  }, [fetchSongs]);
+
+  return { songs, isLoaded, saveSong, deleteSong, uploadAudio, removeAudio, autoSync, refreshSongs: fetchSongs };
 
 }
