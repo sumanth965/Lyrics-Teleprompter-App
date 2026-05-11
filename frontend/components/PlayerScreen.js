@@ -260,15 +260,16 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
                 </div>
                 <input
                   type="range"
-                  min="-2"
-                  max="2"
+                  min="-5"
+                  max="5"
                   step="0.05"
                   value={settings.syncOffset || 0}
                   onChange={(e) => updateSettings({ syncOffset: Number(e.target.value) }).catch(console.error)}
                   className="w-full accent-green-500"
                 />
-                <p className="text-[10px] text-zinc-500 italic">Adjust if lyrics are too early or late</p>
+                <p className="text-[10px] text-zinc-500 italic">Positive values advance lyrics, negative values delay them</p>
               </div>
+
 
               <div className="flex gap-3">
 

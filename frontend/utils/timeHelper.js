@@ -4,10 +4,8 @@ export function findActiveLyricIndex(lyrics, currentTime) {
   let low = 0;
   let high = lyrics.length - 1;
   let active = -1;
-
   while (low <= high) {
     const mid = Math.floor((low + high) / 2);
-
     if (currentTime >= Number(lyrics[mid]?.time ?? 0)) {
       active = mid;
       low = mid + 1;
@@ -18,6 +16,8 @@ export function findActiveLyricIndex(lyrics, currentTime) {
 
   return active === -1 ? 0 : active;
 }
+
+
 
 export function formatSeconds(seconds) {
   const safe = Number.isFinite(seconds) ? Math.max(0, Math.floor(seconds)) : 0;

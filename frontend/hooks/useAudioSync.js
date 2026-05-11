@@ -10,17 +10,43 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
 
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const [isAudioReady, setIsAudioReady] = useState(false);
   const [audioError, setAudioError] = useState(false);
+  
+  const lastUiUpdateRef = useRef(0);
 
-  // Apply syncOffset to the time passed to findActiveLyricIndex
-  const activeIndex = useMemo(() => {
-    const adjustedTime = Math.max(0, currentTime + syncOffset);
-    return findActiveLyricIndex(lyrics, adjustedTime);
-  }, [lyrics, currentTime, syncOffset]);
+  // High-precision polling loop for active index
+  useEffect(() => {
+    if (!isPlaying) return;
 
+    let rafId;
+    const poll = () => {
+      const audio = audioRef.current;
+      if (audio) {
+        const time = audio.currentTime;
+        const adjustedTime = Math.max(0, time + syncOffset);
+        
+        // 1. Immediate sync for lyrics (high precision)
+        const nextIndex = findActiveLyricIndex(lyrics, adjustedTime);
+        setActiveIndex(current => current !== nextIndex ? nextIndex : current);
+        
+        // 2. Throttled update for UI progress bar (low overhead)
+        const now = performance.now();
+        if (now - lastUiUpdateRef.current > 100) { // 10fps for progress bar
+          setCurrentTime(time);
+          lastUiUpdateRef.current = now;
+        }
+      }
+      rafId = requestAnimationFrame(poll);
+    };
+
+    rafId = requestAnimationFrame(poll);
+    return () => cancelAnimationFrame(rafId);
+  }, [isPlaying, lyrics, syncOffset]);
 
   const updatePlaybackState = useCallback(() => {
+
     const audio = audioRef.current;
     if (!audio) return;
 
@@ -40,24 +66,6 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
       setCurrentTime(nextTime);
     }
   }, [isPlaying]);
-
-  // High-precision polling loop
-  useEffect(() => {
-    if (!isPlaying) return;
-
-    let rafId;
-    const poll = () => {
-      const audio = audioRef.current;
-      if (audio) {
-        setCurrentTime(audio.currentTime);
-      }
-      rafId = requestAnimationFrame(poll);
-    };
-
-    rafId = requestAnimationFrame(poll);
-    return () => cancelAnimationFrame(rafId);
-  }, [isPlaying]);
-
 
   const handleLoadedMetadata = useCallback((event) => {
     const nextDuration = Number(event.currentTarget.duration) || 0;
