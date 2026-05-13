@@ -23,7 +23,7 @@ export default function HomePage() {
           </div>
 
           <h1 className="text-6xl font-black leading-[0.9] tracking-tighter text-shadow-[0_0_20px_rgba(34,197,94,0.4)] md:text-8xl">
-            NEVER MISS
+            {/* NEVER MISS */}
             <br />
             <span className="text-[#4be277]">A BEAT AGAIN.</span>
           </h1>
