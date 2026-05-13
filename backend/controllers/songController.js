@@ -20,8 +20,8 @@ const getSongById = catchAsync(async (req, res) => {
 const createSong = catchAsync(async (req, res) => {
   const { title, artist, lyrics } = req.body;
 
-  if (!title || !artist || !lyrics) {
-    return res.status(400).json({ message: "title, artist, and lyrics are required" });
+  if (!title || !artist) {
+    return res.status(400).json({ message: "Title and artist are required" });
   }
 
   const created = await Song.create({ title, artist, lyrics });

@@ -38,26 +38,39 @@ export default function StudioScreen() {
   };
 
   const onSave = async () => {
+    if (!title || !artist) {
+      alert("Title and Artist are required.");
+      return;
+    }
+
+    if (!rawLyrics.trim() && !selectedAudioFile && !existingAudio) {
+      alert("At least one asset is required (Lyrics or Audio file).");
+      return;
+    }
+
     try {
       const savedSong = await saveSong({
         id: editingId,
         title,
         artist,
         rawLyrics,
-        lyrics: parseLyrics(rawLyrics),
+        lyrics: rawLyrics.trim() ? parseLyrics(rawLyrics) : [],
       });
 
       // Handle optional audio upload if a file was selected
       if (selectedAudioFile) {
-        const songId = editingId || savedSong._id || savedSong.id;
+        const songId = editingId || (savedSong && (savedSong._id || savedSong.id));
         if (songId) {
           setUploadingId(songId);
           await uploadAudio(songId, selectedAudioFile);
+        } else {
+          console.error("Could not determine song ID for upload", savedSong);
         }
       }
 
       setEditingId(null);
       setTitle("");
+      setRawLyrics("");
       setSelectedAudioFile(null);
     } catch (error) {
       console.error(error);
