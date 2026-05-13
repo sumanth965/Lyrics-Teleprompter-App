@@ -70,7 +70,9 @@ export default function StudioScreen() {
 
       setEditingId(null);
       setTitle("");
+      setArtist("");
       setRawLyrics("");
+      setExistingAudio(null);
       setSelectedAudioFile(null);
     } catch (error) {
       console.error(error);
@@ -78,6 +80,15 @@ export default function StudioScreen() {
     } finally {
       setUploadingId(null);
     }
+  };
+
+  const onCancel = () => {
+    setEditingId(null);
+    setTitle("");
+    setArtist("");
+    setRawLyrics("");
+    setExistingAudio(null);
+    setSelectedAudioFile(null);
   };
 
   const onImportClick = () => {
@@ -120,7 +131,7 @@ export default function StudioScreen() {
     return (
       <div className="min-h-screen bg-[#131313] p-8 text-[#e5e2e1] md:p-12">
         <header className="mb-12">
-          <button onClick={() => { setEditingId(null); setTitle(""); }} className="mb-4 flex items-center gap-2 text-[#22C55E] hover:underline">
+          <button onClick={onCancel} className="mb-4 flex items-center gap-2 text-[#22C55E] hover:underline">
             <span className="material-symbols-outlined">arrow_back</span> Back to Studio
           </button>
           <h1 className="text-4xl font-black uppercase tracking-tight">Lyric Editor</h1>
@@ -185,21 +196,49 @@ export default function StudioScreen() {
               <p className="text-[10px] uppercase tracking-wider text-zinc-600">Supports MP3, WAV, M4A. Auto-sync works best with clear vocals.</p>
             </div>
 
-            <div className="pt-6">
+            <div className="flex gap-4 pt-6">
               <button 
                 onClick={onSave} 
                 disabled={uploadingId !== null}
-                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95 disabled:opacity-50"
+                className="flex flex-1 items-center justify-center gap-3 rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95 disabled:opacity-50"
               >
                 {uploadingId ? (
                   <>
                     <span className="animate-spin material-symbols-outlined">sync</span>
-                    UPLOADING ASSETS...
+                    UPLOADING...
                   </>
                 ) : (
-                  "SAVE TO DATABASE"
+                  "SAVE ASSET"
                 )}
               </button>
+
+              {editingId && existingAudio && (
+                <button
+                  onClick={async () => {
+                    if (uploadingId) return;
+                    setUploadingId(editingId);
+                    try {
+                      await autoSync(editingId);
+                      alert("AI Sync complete! Lyrics updated.");
+                      // The context will update 'songs', but we should refresh our local rawLyrics
+                      const updatedSong = songs.find(s => s.id === editingId);
+                      if (updatedSong) {
+                        setRawLyrics(updatedSong.rawLyrics);
+                      }
+                    } catch (err) {
+                      alert(err.message);
+                    } finally {
+                      setUploadingId(null);
+                    }
+                  }}
+                  disabled={uploadingId !== null}
+                  className="flex items-center justify-center gap-3 rounded-xl border border-[#22C55E]/30 bg-[#22C55E]/10 px-6 font-bold text-[#22C55E] transition-all hover:bg-[#22C55E]/20"
+                  title="AI Auto-Sync (Beta)"
+                >
+                  <span className={`material-symbols-outlined ${uploadingId ? "animate-pulse" : ""}`}>auto_fix_high</span>
+                  AI SYNC
+                </button>
+              )}
             </div>
           </div>
 
