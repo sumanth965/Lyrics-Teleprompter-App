@@ -2,6 +2,7 @@ const path = require("path");
 const fs = require("fs");
 const Song = require("../models/Song");
 const catchAsync = require("../utils/catchAsync");
+const { OpenAI } = require("openai");
 
 const getSongs = catchAsync(async (req, res) => {
   const songs = await Song.find().sort({ createdAt: -1 });
@@ -102,6 +103,8 @@ const deleteAudio = catchAsync(async (req, res) => {
 });
 
 const autoSync = catchAsync(async (req, res) => {
+  console.log(`Starting AI Sync for song ID: ${req.params.id}`);
+  
   const song = await Song.findById(req.params.id);
   if (!song || !song.audioUrl) {
     return res.status(400).json({ message: "Song or audio file missing" });
@@ -109,27 +112,46 @@ const autoSync = catchAsync(async (req, res) => {
 
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey || apiKey === "your_openai_api_key_here") {
+    console.error("OpenAI API Key is missing or default.");
     return res.status(400).json({ 
       message: "OpenAI API Key is missing. Please add it to your .env file and restart the server." 
     });
   }
 
-  const { OpenAI } = require("openai");
-  const openai = new OpenAI({ apiKey });
+  let openai;
+  try {
+    openai = new OpenAI({ apiKey });
+  } catch (initError) {
+    console.error("Failed to initialize OpenAI client:", initError);
+    return res.status(500).json({ message: "AI Client initialization failed", error: initError.message });
+  }
 
   const audioPath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
+  console.log(`Loading audio from: ${audioPath}`);
   
   if (!fs.existsSync(audioPath)) {
+    console.error(`Audio file not found: ${audioPath}`);
     return res.status(404).json({ message: "Audio file not found on server" });
   }
 
   try {
+    console.log("Calling OpenAI Whisper API...");
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
       model: "whisper-1",
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
     });
+
+    console.log("Transcription received from OpenAI.");
+
+    if (!transcription.segments || !Array.isArray(transcription.segments)) {
+      console.warn("No segments found in transcription response.");
+      return res.status(500).json({ 
+        message: "AI returned no segments. The audio might be too quiet or contain no speech.",
+        fullResponse: transcription
+      });
+    }
 
     const lrcLyrics = transcription.segments.map(segment => {
       const time = segment.start;
@@ -138,23 +160,33 @@ const autoSync = catchAsync(async (req, res) => {
       return `[${mins}:${secs}] ${segment.text.trim()}`;
     }).join("\n");
 
+    if (!lrcLyrics) {
+      return res.status(400).json({ message: "AI generated empty lyrics. Please check the audio file." });
+    }
+
     song.lyrics = lrcLyrics;
     await song.save();
 
+    console.log("AI Sync successfully completed and saved.");
     res.json({ lyrics: lrcLyrics, message: "AI Sync complete" });
   } catch (error) {
-    console.error("AI Sync Error:", error);
+    console.error("CRITICAL AI Sync Error:", error);
     
     let userMessage = "AI transcription failed.";
-    if (error.status === 429) {
+    const status = error.status || error.response?.status || 500;
+
+    if (status === 429) {
       userMessage = "OpenAI Quota Exceeded. Please check your billing/balance at platform.openai.com.";
-    } else if (error.status === 401) {
+    } else if (status === 401) {
       userMessage = "Invalid OpenAI API Key. Please check your .env file.";
+    } else if (status === 413) {
+      userMessage = "Audio file too large. Max size for AI sync is 25MB.";
     }
 
-    res.status(error.status || 500).json({ 
+    res.status(status).json({ 
       message: userMessage, 
-      error: error.message 
+      error: error.message,
+      stack: process.env.NODE_ENV === "development" ? error.stack : undefined
     });
   }
 });
