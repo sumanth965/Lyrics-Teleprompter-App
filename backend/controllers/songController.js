@@ -122,7 +122,8 @@ const autoSync = catchAsync(async (req, res) => {
   try {
     openai = new OpenAI({ 
       apiKey,
-      baseURL: "https://api.groq.com/openai/v1"
+      baseURL: "https://api.groq.com/openai/v1",
+      timeout: 60000,
     });
   } catch (initError) {
     console.error("Failed to initialize AI client:", initError);
@@ -143,7 +144,7 @@ const autoSync = catchAsync(async (req, res) => {
     console.log(`Calling Groq Whisper API (Language: ${language || "auto-detect"})...`);
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: "whisper-large-v3", // Use the full multilingual model for better accuracy
+      model: "whisper-large-v3-turbo", // Use turbo for stability and speed
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
       language: language || undefined, // Pass language if provided
