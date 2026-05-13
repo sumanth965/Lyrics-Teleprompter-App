@@ -1,25 +1,10 @@
 import Link from "next/link";
+import Navbar from "../components/Navbar";
 
 export default function HomePage() {
   return (
     <main className="bg-[#131313] text-[#e5e2e1] selection:bg-[#22c55e]/30">
-      <nav className="fixed top-0 z-50 flex w-full items-center justify-between bg-[#131313]/70 px-8 py-4 shadow-[0_20px_40px_rgba(0,0,0,0.4)] backdrop-blur-md">
-        <div className="text-xl font-black tracking-tighter text-[#22C55E]">OBSIDIAN STAGE</div>
-        <div className="hidden items-center gap-8 tracking-tight md:flex">
-          <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/library">
-            Library
-          </Link>
-          <Link className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="/studio">
-            Studio
-          </Link>
-          <a className="text-[#e5e2e1]/50 transition-all duration-200 hover:text-[#e5e2e1]" href="#">
-            Settings
-          </a>
-        </div>
-        <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-6 py-2 font-bold text-[#003915] shadow-lg shadow-[#4be277]/20 transition-all duration-200 active:scale-95">
-          Go Live
-        </button>
-      </nav>
+      <Navbar />
 
       <section className="relative flex min-h-[920px] items-center justify-center overflow-hidden px-8 pt-24">
         <div className="absolute inset-0 z-0">

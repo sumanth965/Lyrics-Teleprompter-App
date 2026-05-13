@@ -4,6 +4,7 @@ import { useState, useRef } from "react";
 import { useSongs } from "../contexts/SongsContext";
 import { parseLyrics } from "../utils/lyricParser";
 import Link from "next/link";
+import Navbar from "./Navbar";
 
 export default function StudioScreen() {
   const { songs, saveSong, deleteSong, uploadAudio, removeAudio, autoSync } = useSongs();
@@ -129,8 +130,10 @@ export default function StudioScreen() {
 
   if (editingId !== null || title) {
     return (
-      <div className="min-h-screen bg-[#131313] p-8 text-[#e5e2e1] md:p-12">
-        <header className="mb-12">
+      <div className="min-h-screen bg-[#131313] text-[#e5e2e1]">
+        <Navbar />
+        <div className="p-8 pt-32 md:p-12 md:pt-32">
+          <header className="mb-12">
           <button onClick={onCancel} className="mb-4 flex items-center gap-2 text-[#22C55E] hover:underline">
             <span className="material-symbols-outlined">arrow_back</span> Back to Studio
           </button>
@@ -257,14 +260,17 @@ export default function StudioScreen() {
               className="min-h-[400px] flex-1 resize-none rounded-xl border border-[#3d4a3d]/30 bg-[#0a0a0a] p-6 font-mono text-sm outline-none focus:border-[#22C55E]"
             />
           </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#131313] p-8 text-[#e5e2e1] md:p-12">
-      <header className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
+    <div className="min-h-screen bg-[#131313] text-[#e5e2e1]">
+      <Navbar />
+      <div className="p-8 pt-32 md:p-12 md:pt-32">
+        <header className="mb-12 flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
         <div>
           <h1 className="mb-2 text-5xl font-black uppercase tracking-tight">Studio</h1>
           <p className="text-sm tracking-wide text-[#bccbb9]">DATABASE WORKSPACE & ASSET MANAGEMENT</p>

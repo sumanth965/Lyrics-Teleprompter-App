@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import SongCard from "../../components/SongCard";
 import { useSongs } from "../../contexts/SongsContext";
+import Navbar from "../../components/Navbar";
 
 export default function LibraryPage() {
   const { songs, isLoaded } = useSongs();
@@ -44,29 +45,7 @@ export default function LibraryPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0a] text-[#f4f4f4] font-sans selection:bg-[#22C55E]/30 selection:text-[#22C55E]">
       {/* Premium Navbar */}
-      <nav className="fixed top-0 z-[100] w-full border-b border-white/5 bg-[#0a0a0a]/80 px-6 py-4 backdrop-blur-xl md:px-12">
-        <div className="mx-auto flex max-w-[1600px] items-center justify-between">
-          <Link href="/" className="flex items-center gap-2 group">
-            <div className="h-8 w-8 rounded-lg bg-gradient-to-br from-[#22C55E] to-[#16a34a] flex items-center justify-center text-black font-black">O</div>
-            <span className="text-xl font-black tracking-tighter transition-colors group-hover:text-[#22C55E]">OBSIDIAN STAGE</span>
-          </Link>
-          
-          <div className="hidden items-center gap-10 text-xs font-bold uppercase tracking-widest md:flex">
-            <Link className="text-white/40 transition-colors hover:text-white" href="/">Dashboard</Link>
-            <Link className="text-[#22C55E]" href="/library">Library</Link>
-            <Link className="text-white/40 transition-colors hover:text-white" href="/studio">Studio</Link>
-          </div>
-
-          <div className="flex items-center gap-4">
-            <div className="hidden h-1 w-24 rounded-full bg-white/5 sm:block overflow-hidden">
-              <div className="h-full w-1/3 bg-[#22C55E]" />
-            </div>
-            <button className="rounded-full border border-white/10 bg-white/5 px-6 py-2 text-[10px] font-black uppercase tracking-widest transition-all hover:bg-white/10 active:scale-95">
-              Live Mode
-            </button>
-          </div>
-        </div>
-      </nav>
+      <Navbar />
 
       <div className="flex pt-20">
 
