@@ -137,13 +137,16 @@ const autoSync = catchAsync(async (req, res) => {
     return res.status(404).json({ message: "Audio file not found on server" });
   }
 
+  const { language } = req.body; // Allow optional language hint (e.g. 'hi' for Hindi)
+
   try {
-    console.log("Calling Groq Whisper API...");
+    console.log(`Calling Groq Whisper API (Language: ${language || "auto-detect"})...`);
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: "whisper-large-v3-turbo", // Groq's latest fast whisper model
+      model: "whisper-large-v3", // Use the full multilingual model for better accuracy
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
+      language: language || undefined, // Pass language if provided
     });
 
     console.log("Transcription received from AI provider.");
