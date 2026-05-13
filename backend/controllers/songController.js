@@ -141,7 +141,7 @@ const autoSync = catchAsync(async (req, res) => {
     console.log("Calling Groq Whisper API...");
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: "distil-whisper-large-v3-en", // Groq's fast whisper model
+      model: "whisper-large-v3-turbo", // Groq's latest fast whisper model
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
     });
