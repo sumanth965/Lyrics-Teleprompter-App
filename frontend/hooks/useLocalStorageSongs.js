@@ -71,7 +71,9 @@ export default function useLocalStorageSongs() {
       throw new Error("Unable to save song");
     }
 
+    const savedData = await response.json();
     await fetchSongs();
+    return savedData;
   }, [fetchSongs]);
 
   const deleteSong = useCallback(async (id) => {
