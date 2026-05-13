@@ -16,12 +16,16 @@ export default function StudioScreen() {
   const fileInputRef = useRef(null);
   const audioInputRef = useRef(null);
   const [uploadingId, setUploadingId] = useState(null);
+  const [selectedAudioFile, setSelectedAudioFile] = useState(null);
+  const [existingAudio, setExistingAudio] = useState(null);
 
   const onEdit = (song) => {
     setEditingId(song.id);
     setTitle(song.title);
     setArtist(song.artist);
     setRawLyrics(song.rawLyrics || song.lyrics.map((l) => `[${formatTime(l.time)}] ${l.text}`).join("\n"));
+    setExistingAudio(song.audio);
+    setSelectedAudioFile(null);
   };
 
   const onNew = () => {
@@ -29,20 +33,37 @@ export default function StudioScreen() {
     setTitle("New Song");
     setArtist("Unknown Artist");
     setRawLyrics("");
+    setExistingAudio(null);
+    setSelectedAudioFile(null);
   };
 
   const onSave = async () => {
     try {
-      await saveSong({
+      const savedSong = await saveSong({
         id: editingId,
         title,
         artist,
         rawLyrics,
         lyrics: parseLyrics(rawLyrics),
       });
+
+      // Handle optional audio upload if a file was selected
+      if (selectedAudioFile) {
+        const songId = editingId || savedSong._id || savedSong.id;
+        if (songId) {
+          setUploadingId(songId);
+          await uploadAudio(songId, selectedAudioFile);
+        }
+      }
+
       setEditingId(null);
+      setTitle("");
+      setSelectedAudioFile(null);
     } catch (error) {
       console.error(error);
+      alert("Save failed: " + error.message);
+    } finally {
+      setUploadingId(null);
     }
   };
 
@@ -110,9 +131,61 @@ export default function StudioScreen() {
                 className="w-full rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-4 outline-none focus:border-[#22C55E]"
               />
             </div>
+            <div className="space-y-4 rounded-2xl border border-[#3d4a3d]/20 bg-[#1a1a1a] p-6">
+              <div className="flex items-center justify-between">
+                <label className="text-xs uppercase tracking-widest text-[#bccbb9]">Audio File (Optional)</label>
+                {existingAudio && !selectedAudioFile && (
+                  <span className="flex items-center gap-1 text-[10px] font-bold text-[#22C55E]">
+                    <span className="material-symbols-outlined text-sm">check_circle</span> CURRENTLY ATTACHED
+                  </span>
+                )}
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <button 
+                  onClick={() => audioInputRef.current?.click()}
+                  className={`flex items-center gap-2 rounded-xl border px-6 py-3 text-sm font-bold transition-all ${
+                    selectedAudioFile 
+                      ? "border-[#22C55E] bg-[#22C55E]/10 text-[#22C55E]" 
+                      : "border-[#3d4a3d]/40 bg-[#131313] text-[#bccbb9] hover:border-[#22C55E]/50"
+                  }`}
+                >
+                  <span className="material-symbols-outlined">
+                    {selectedAudioFile ? "check_circle" : "audiotrack"}
+                  </span>
+                  {selectedAudioFile ? selectedAudioFile.name : existingAudio ? "REPLACE AUDIO" : "SELECT AUDIO FILE"}
+                </button>
+                
+                {selectedAudioFile && (
+                  <button onClick={() => setSelectedAudioFile(null)} className="text-[#bccbb9] hover:text-red-400">
+                    <span className="material-symbols-outlined">close</span>
+                  </button>
+                )}
+                <input 
+                  type="file" 
+                  ref={audioInputRef} 
+                  onChange={(e) => setSelectedAudioFile(e.target.files[0])} 
+                  className="hidden" 
+                  accept="audio/*" 
+                />
+              </div>
+              <p className="text-[10px] uppercase tracking-wider text-zinc-600">Supports MP3, WAV, M4A. Auto-sync works best with clear vocals.</p>
+            </div>
+
             <div className="pt-6">
-              <button onClick={onSave} className="w-full rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95">
-                SAVE TO DATABASE
+              <button 
+                onClick={onSave} 
+                disabled={uploadingId !== null}
+                className="flex w-full items-center justify-center gap-3 rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95 disabled:opacity-50"
+              >
+                {uploadingId ? (
+                  <>
+                    <span className="animate-spin material-symbols-outlined">sync</span>
+                    UPLOADING ASSETS...
+                  </>
+                ) : (
+                  "SAVE TO DATABASE"
+                )}
               </button>
             </div>
           </div>
