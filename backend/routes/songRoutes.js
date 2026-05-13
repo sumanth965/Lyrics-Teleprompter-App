@@ -18,6 +18,7 @@ router.route("/:id").get(getSongById).put(updateSong).delete(deleteSong);
 router.post("/:id/audio", audioUpload.single("audio"), uploadAudio);
 router.delete("/:id/audio", deleteAudio);
 
+
 // AI Sync Route
 router.route("/:id/auto-sync")
   .post(autoSync)
