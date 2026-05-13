@@ -110,19 +110,22 @@ const autoSync = catchAsync(async (req, res) => {
     return res.status(400).json({ message: "Song or audio file missing" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY;
-  if (!apiKey || apiKey === "your_openai_api_key_here") {
-    console.error("OpenAI API Key is missing or default.");
+  const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+  if (!apiKey || apiKey === "your_api_key_here") {
+    console.error("Groq/OpenAI API Key is missing.");
     return res.status(400).json({ 
-      message: "OpenAI API Key is missing. Please add it to your .env file and restart the server." 
+      message: "API Key is missing. Please add GROQ_API_KEY to your .env file." 
     });
   }
 
   let openai;
   try {
-    openai = new OpenAI({ apiKey });
+    openai = new OpenAI({ 
+      apiKey,
+      baseURL: "https://api.groq.com/openai/v1"
+    });
   } catch (initError) {
-    console.error("Failed to initialize OpenAI client:", initError);
+    console.error("Failed to initialize AI client:", initError);
     return res.status(500).json({ message: "AI Client initialization failed", error: initError.message });
   }
 
@@ -135,15 +138,15 @@ const autoSync = catchAsync(async (req, res) => {
   }
 
   try {
-    console.log("Calling OpenAI Whisper API...");
+    console.log("Calling Groq Whisper API...");
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: "whisper-1",
+      model: "distil-whisper-large-v3-en", // Groq's fast whisper model
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
     });
 
-    console.log("Transcription received from OpenAI.");
+    console.log("Transcription received from AI provider.");
 
     if (!transcription.segments || !Array.isArray(transcription.segments)) {
       console.warn("No segments found in transcription response.");
@@ -176,9 +179,9 @@ const autoSync = catchAsync(async (req, res) => {
     const status = error.status || error.response?.status || 500;
 
     if (status === 429) {
-      userMessage = "OpenAI Quota Exceeded. Please check your billing/balance at platform.openai.com.";
+      userMessage = "AI Quota Exceeded. Please check your billing/balance at the provider dashboard.";
     } else if (status === 401) {
-      userMessage = "Invalid OpenAI API Key. Please check your .env file.";
+      userMessage = "Invalid AI API Key. Please check your .env file.";
     } else if (status === 413) {
       userMessage = "Audio file too large. Max size for AI sync is 25MB.";
     }
