@@ -137,7 +137,7 @@ const autoSync = catchAsync(async (req, res) => {
     return res.status(404).json({ message: "Audio file not found on server" });
   }
 
-  const { language } = req.body; // Allow optional language hint (e.g. 'hi' for Hindi)
+  const { language } = req.body || {}; // Safe destructuring
 
   try {
     console.log(`Calling Groq Whisper API (Language: ${language || "auto-detect"})...`);
