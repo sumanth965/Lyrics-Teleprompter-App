@@ -384,5 +384,6 @@ export default function StudioScreen() {
         ))}
       </div>
     </div>
+  </div>
   );
 }
