@@ -69,52 +69,9 @@ export default function LibraryPage() {
       </nav>
 
       <div className="flex pt-20">
-        {/* Dynamic Sidebar */}
-        <aside className="fixed left-0 hidden h-[calc(100vh-80px)] w-72 flex-col border-r border-white/5 bg-[#0a0a0a] p-8 lg:flex">
-          <div className="mb-10 space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Filters</p>
-            <nav className="space-y-1">
-              <button 
-                onClick={() => setFilter("all")}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold transition-all ${filter === "all" ? "bg-[#22C55E]/10 text-[#22C55E]" : "text-white/40 hover:bg-white/5 hover:text-white"}`}
-              >
-                <span className="material-symbols-outlined text-lg">all_inclusive</span> All Repertoire
-              </button>
-              <button 
-                onClick={() => setFilter("audio")}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold transition-all ${filter === "audio" ? "bg-[#22C55E]/10 text-[#22C55E]" : "text-white/40 hover:bg-white/5 hover:text-white"}`}
-              >
-                <span className="material-symbols-outlined text-lg">music_note</span> With Audio
-              </button>
-              <button 
-                onClick={() => setFilter("recent")}
-                className={`flex w-full items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold transition-all ${filter === "recent" ? "bg-[#22C55E]/10 text-[#22C55E]" : "text-white/40 hover:bg-white/5 hover:text-white"}`}
-              >
-                <span className="material-symbols-outlined text-lg">history</span> Recently Played
-              </button>
-            </nav>
-          </div>
-
-          <div className="space-y-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-white/30">Shortcuts</p>
-            <nav className="space-y-1">
-              <Link href="/studio" className="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold text-white/40 transition-all hover:bg-white/5 hover:text-white">
-                <span className="material-symbols-outlined text-lg">add_box</span> Create New
-              </Link>
-              <Link href="/player" className="flex items-center gap-3 rounded-xl px-4 py-3 text-xs font-bold text-white/40 transition-all hover:bg-white/5 hover:text-white">
-                <span className="material-symbols-outlined text-lg">stadium</span> Stage View
-              </Link>
-            </nav>
-          </div>
-
-          <div className="mt-auto rounded-2xl bg-gradient-to-br from-zinc-900 to-black p-6 border border-white/5">
-            <p className="mb-2 text-[10px] font-black uppercase tracking-widest text-[#22C55E]">Performance Tip</p>
-            <p className="text-[11px] leading-relaxed text-white/50">Use 'Space' in the player to quickly toggle playback during rehearsal.</p>
-          </div>
-        </aside>
 
         {/* Main Content Area */}
-        <main className="min-h-screen w-full lg:ml-72">
+        <main className="min-h-screen w-full">
           <div className="mx-auto max-w-[1400px] px-6 py-10 md:px-12">
             
             <header className="mb-12">
