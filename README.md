@@ -1,7 +1,7 @@
 What you should improve
-Add user authentication and protect song/settings APIs.
+<!-- Add user authentication and protect song/settings APIs. -->
 
-Make songs and settings user-specific instead of global.
+<!-- Make songs and settings user-specific instead of global. -->
 
 Add setlists with drag-and-drop song ordering.
 
