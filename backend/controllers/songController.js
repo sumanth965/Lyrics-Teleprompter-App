@@ -5,7 +5,16 @@ const catchAsync = require("../utils/catchAsync");
 const { OpenAI } = require("openai");
 
 const getSongs = catchAsync(async (req, res) => {
-  const songs = await Song.find({ user: req.user._id }).sort({ createdAt: -1 });
+  const { audio, artist, title, recent } = req.query;
+  const query = { user: req.user._id };
+  if (audio === "has") query.audioUrl = { $ne: null };
+  if (audio === "missing") query.audioUrl = null;
+  if (artist) query.artist = new RegExp(artist, "i");
+  if (title) query.title = new RegExp(title, "i");
+  if (recent === "true") {
+    query.createdAt = { $gte: new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) };
+  }
+  const songs = await Song.find(query).sort({ createdAt: -1 });
   res.json(songs);
 });
 
@@ -18,18 +27,18 @@ const getSongById = catchAsync(async (req, res) => {
 });
 
 const createSong = catchAsync(async (req, res) => {
-  const { title, artist, lyrics } = req.body;
+  const { title, artist, lyrics, notes, key, bpm, capo, chords, arrangement, displaySettings } = req.body;
 
   if (!title || !artist) {
     return res.status(400).json({ message: "Title and artist are required" });
   }
 
-  const created = await Song.create({ title, artist, lyrics, user: req.user._id });
+  const created = await Song.create({ title, artist, lyrics, notes, key, bpm, capo, chords, arrangement, displaySettings, user: req.user._id });
   res.status(201).json(created);
 });
 
 const updateSong = catchAsync(async (req, res) => {
-  const { title, artist, lyrics } = req.body;
+  const { title, artist, lyrics, notes, key, bpm, capo, chords, arrangement, displaySettings } = req.body;
   const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
 
   if (!song) {
@@ -38,7 +47,17 @@ const updateSong = catchAsync(async (req, res) => {
 
   if (title !== undefined) song.title = title;
   if (artist !== undefined) song.artist = artist;
-  if (lyrics !== undefined) song.lyrics = lyrics;
+  if (lyrics !== undefined && lyrics !== song.lyrics) {
+    song.lyricVersions.push({ lyrics: song.lyrics });
+    song.lyrics = lyrics;
+  }
+  if (notes !== undefined) song.notes = notes;
+  if (key !== undefined) song.key = key;
+  if (bpm !== undefined) song.bpm = bpm || null;
+  if (capo !== undefined) song.capo = capo;
+  if (chords !== undefined) song.chords = chords;
+  if (arrangement !== undefined) song.arrangement = arrangement;
+  if (displaySettings !== undefined) song.displaySettings = displaySettings;
 
   const updated = await song.save();
   res.json(updated);
@@ -80,10 +99,19 @@ const uploadAudio = catchAsync(async (req, res) => {
   }
 
   // Store as a root-relative URL: /uploads/audio/<filename>
-  song.audioUrl = `/uploads/audio/${req.file.filename}`;
+  song.audioUrl = process.env.AUDIO_PUBLIC_BASE_URL
+    ? `${process.env.AUDIO_PUBLIC_BASE_URL.replace(/\/$/, "")}/${req.file.filename}`
+    : `/uploads/audio/${req.file.filename}`;
+  song.audioMetadata = {
+    originalFilename: req.file.originalname,
+    mimeType: req.file.mimetype,
+    size: req.file.size,
+    duration: req.body.duration ? Number(req.body.duration) : undefined,
+    storageProvider: process.env.AUDIO_PUBLIC_BASE_URL ? "cloud-compatible" : "local",
+  };
   await song.save();
 
-  res.json({ audioUrl: song.audioUrl, message: "Audio uploaded successfully" });
+  res.json({ audioUrl: song.audioUrl, audioMetadata: song.audioMetadata, message: "Audio uploaded successfully" });
 });
 
 const deleteAudio = catchAsync(async (req, res) => {
@@ -96,6 +124,7 @@ const deleteAudio = catchAsync(async (req, res) => {
     const filePath = path.resolve(__dirname, "..", song.audioUrl.replace(/^\//, ""));
     if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
     song.audioUrl = null;
+    song.audioMetadata = undefined;
     await song.save();
   }
 
@@ -110,11 +139,12 @@ const autoSync = catchAsync(async (req, res) => {
     return res.status(400).json({ message: "Song or audio file missing" });
   }
 
-  const apiKey = process.env.GROQ_API_KEY || process.env.OPENAI_API_KEY;
+  const provider = (process.env.AI_PROVIDER || (process.env.GROQ_API_KEY ? "groq" : "openai")).toLowerCase();
+  const apiKey = provider === "groq" ? process.env.GROQ_API_KEY : process.env.OPENAI_API_KEY;
   if (!apiKey || apiKey === "your_api_key_here") {
     console.error("Groq/OpenAI API Key is missing.");
     return res.status(400).json({ 
-      message: "API Key is missing. Please add GROQ_API_KEY to your .env file." 
+      message: `API key is missing. Set AI_PROVIDER=${provider} with ${provider === "groq" ? "GROQ_API_KEY" : "OPENAI_API_KEY"}.` 
     });
   }
 
@@ -122,8 +152,8 @@ const autoSync = catchAsync(async (req, res) => {
   try {
     openai = new OpenAI({ 
       apiKey,
-      baseURL: "https://api.groq.com/openai/v1",
-      timeout: 60000,
+      baseURL: provider === "groq" ? (process.env.GROQ_BASE_URL || "https://api.groq.com/openai/v1") : (process.env.OPENAI_BASE_URL || undefined),
+      timeout: Number(process.env.AI_TIMEOUT_MS || 60000),
     });
   } catch (initError) {
     console.error("Failed to initialize AI client:", initError);
@@ -141,10 +171,10 @@ const autoSync = catchAsync(async (req, res) => {
   const { language } = req.body || {}; // Safe destructuring
 
   try {
-    console.log(`Calling Groq Whisper API (Language: ${language || "auto-detect"})...`);
+    console.log(`Calling ${provider} transcription API (Language: ${language || "auto-detect"})...`);
     const transcription = await openai.audio.transcriptions.create({
       file: fs.createReadStream(audioPath),
-      model: "whisper-large-v3-turbo", // Use turbo for stability and speed
+      model: provider === "groq" ? (process.env.GROQ_TRANSCRIPTION_MODEL || "whisper-large-v3-turbo") : (process.env.OPENAI_TRANSCRIPTION_MODEL || "whisper-1"),
       response_format: "verbose_json",
       timestamp_granularities: ["segment"],
       language: language || undefined, // Pass language if provided

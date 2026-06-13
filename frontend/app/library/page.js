@@ -11,6 +11,7 @@ export default function LibraryPage() {
   const { songs, isLoaded } = useSongs();
   const [search, setSearch] = useState("");
   const [filter, setFilter] = useState("all");
+  const [setlist, setSetlist] = useState([]);
 
   const filteredSongs = useMemo(() => {
     const query = search.trim().toLowerCase();
@@ -24,9 +25,14 @@ export default function LibraryPage() {
 
     if (filter === "audio") {
       result = result.filter(song => song.audio);
+    } else if (filter === "missing-audio") {
+      result = result.filter(song => !song.audio);
     } else if (filter === "recent") {
-      // Just a mock filter for now
-      result = [...result].reverse();
+      result = [...result].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else if (filter === "artist") {
+      result = [...result].sort((a, b) => a.artist.localeCompare(b.artist));
+    } else if (filter === "title") {
+      result = [...result].sort((a, b) => a.title.localeCompare(b.title));
     }
 
     return result;
@@ -77,6 +83,32 @@ export default function LibraryPage() {
               </div>
             </header>
 
+            <div className="mb-8 flex flex-wrap gap-2">
+              {[
+                ["all", "All"], ["audio", "Has audio"], ["missing-audio", "Missing audio"], ["recent", "Recently added"], ["artist", "Artist"], ["title", "Title"],
+              ].map(([value, label]) => (
+                <button key={value} onClick={() => setFilter(value)} className={`rounded-full px-4 py-2 text-xs font-black uppercase tracking-wider ${filter === value ? "bg-[#22C55E] text-black" : "bg-white/5 text-white/50 hover:text-white"}`}>{label}</button>
+              ))}
+            </div>
+
+            <section className="mb-10 rounded-3xl border border-white/10 bg-white/[0.03] p-5">
+              <div className="mb-4 flex items-center justify-between gap-4">
+                <div>
+                  <h2 className="text-xl font-black uppercase">Setlist Builder</h2>
+                  <p className="text-xs text-white/40">Drag songs here, then drag inside the setlist to reorder for stage.</p>
+                </div>
+                <button onClick={() => setSetlist([])} className="text-xs font-bold text-red-300 hover:text-red-200">Clear</button>
+              </div>
+              <div onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const id = event.dataTransfer.getData("song/id"); const song = songs.find((item) => item.id === id); if (song && !setlist.some((item) => item.id === id)) setSetlist((items) => [...items, song]); }} className="min-h-24 rounded-2xl border border-dashed border-white/10 p-3">
+                {setlist.length === 0 ? <p className="p-4 text-sm text-white/30">Drop songs here to create a setlist.</p> : setlist.map((song, index) => (
+                  <div key={song.id} draggable onDragStart={(event) => event.dataTransfer.setData("setlist/index", String(index))} onDragOver={(event) => event.preventDefault()} onDrop={(event) => { const from = Number(event.dataTransfer.getData("setlist/index")); if (Number.isNaN(from)) return; setSetlist((items) => { const next = [...items]; const [moved] = next.splice(from, 1); next.splice(index, 0, moved); return next; }); }} className="mb-2 flex cursor-grab items-center justify-between rounded-xl bg-black/30 p-3 text-sm">
+                    <span><strong>{index + 1}. {song.title}</strong> <span className="text-white/40">— {song.artist}</span></span>
+                    <Link href={`/player?songId=${song.id}`} className="text-[#22C55E]">Play</Link>
+                  </div>
+                ))}
+              </div>
+            </section>
+
             {/* Grid with improved responsive behavior */}
             {filteredSongs.length === 0 ? (
               <div className="flex h-64 flex-col items-center justify-center rounded-3xl border border-dashed border-white/10 bg-white/[0.02] text-center">
@@ -87,7 +119,7 @@ export default function LibraryPage() {
             ) : (
               <div className="grid grid-cols-1 gap-6 pb-32 sm:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4">
                 {filteredSongs.map((song) => (
-                  <SongCard key={song.id} song={song} />
+                  <div key={song.id} draggable onDragStart={(event) => event.dataTransfer.setData("song/id", song.id)}><SongCard song={song} /></div>
                 ))}
               </div>
             )}

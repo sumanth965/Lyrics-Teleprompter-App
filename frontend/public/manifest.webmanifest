@@ -1,0 +1,9 @@
+{
+  "name": "Obsidian Stage",
+  "short_name": "Stage",
+  "start_url": "/library",
+  "display": "standalone",
+  "background_color": "#131313",
+  "theme_color": "#22C55E",
+  "description": "Offline-ready lyrics teleprompter for live performance."
+}

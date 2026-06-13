@@ -9,6 +9,8 @@ export const metadata: Metadata = {
 import { AuthProvider } from "../contexts/AuthContext";
 import { SongsProvider } from "../contexts/SongsContext";
 import { SettingsProvider } from "../contexts/SettingsContext";
+import { ToastProvider } from "../components/ToastProvider";
+import PwaRegister from "../components/PwaRegister";
 
 export default function RootLayout({
   children,
@@ -18,6 +20,7 @@ export default function RootLayout({
   return (
     <html lang="en" className="h-full">
       <head>
+        <link rel="manifest" href="/manifest.webmanifest" />
         <link
           rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap"
@@ -30,7 +33,7 @@ export default function RootLayout({
       <body className="min-h-full bg-[#131313] text-[#e5e2e1]">
         <AuthProvider>
           <SettingsProvider>
-            <SongsProvider>{children}</SongsProvider>
+            <SongsProvider><ToastProvider><PwaRegister />{children}</ToastProvider></SongsProvider>
           </SettingsProvider>
         </AuthProvider>
       </body>
