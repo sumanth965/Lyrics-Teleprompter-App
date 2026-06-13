@@ -5,6 +5,7 @@ const dotenv = require("dotenv");
 const connectDB = require("./config/db");
 const songRoutes = require("./routes/songRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
+const authRoutes = require("./routes/authRoutes");
 const mongoose = require("mongoose");
 
 dotenv.config();
@@ -25,17 +26,6 @@ app.use((req, res, next) => {
   next();
 });
 
-// Database connection check middleware
-app.use((req, res, next) => {
-  if (mongoose.connection.readyState !== 1) {
-    return res.status(503).json({ 
-      message: "Database connection not ready", 
-      state: mongoose.connection.readyState 
-    });
-  }
-  next();
-});
-
 app.use("/uploads", express.static(path.resolve(__dirname, "uploads")));
 
 app.get("/api/health", (req, res) => {
@@ -46,6 +36,7 @@ app.get("/api/health", (req, res) => {
   });
 });
 
+app.use("/api/auth", authRoutes);
 app.use("/api/songs", songRoutes);
 app.use("/api/settings", settingsRoutes);
 

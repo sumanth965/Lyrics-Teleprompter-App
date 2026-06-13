@@ -3,10 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function Navbar() {
   const pathname = usePathname();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { user, isAuthLoaded, isAuthenticated, logout } = useAuth();
 
   const navLinks = [
     { name: "Dashboard", href: "/" },
@@ -51,10 +53,18 @@ export default function Navbar() {
               }`} />
             </div>
             
-            {/* Desktop Button */}
-            <Link href="/player" className="hidden rounded-full border border-[#22C55E]/20 bg-[#22C55E]/5 px-6 py-2 text-[10px] font-black uppercase tracking-widest text-[#22C55E] transition-all hover:bg-[#22C55E]/10 md:block">
-              Go Live
-            </Link>
+            {isAuthLoaded && isAuthenticated ? (
+              <div className="hidden items-center gap-3 md:flex">
+                <span className="max-w-40 truncate text-[10px] font-black uppercase tracking-widest text-white/50">{user?.name || user?.email}</span>
+                <button onClick={logout} className="rounded-full border border-white/10 px-4 py-2 text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white">Logout</button>
+                <Link href="/player" className="rounded-full border border-[#22C55E]/20 bg-[#22C55E]/5 px-6 py-2 text-[10px] font-black uppercase tracking-widest text-[#22C55E] transition-all hover:bg-[#22C55E]/10">Go Live</Link>
+              </div>
+            ) : (
+              <div className="hidden items-center gap-3 md:flex">
+                <Link href="/login" className="text-[10px] font-black uppercase tracking-widest text-white/60 hover:text-white">Login</Link>
+                <Link href="/register" className="rounded-full bg-[#22C55E] px-5 py-2 text-[10px] font-black uppercase tracking-widest text-[#003915]">Register</Link>
+              </div>
+            )}
 
             {/* Mobile Menu Toggle */}
             <button 
@@ -90,14 +100,19 @@ export default function Navbar() {
               );
             })}
             
-            <Link 
-              href="/player"
-              onClick={() => setIsMenuOpen(false)}
-              className="mt-4 flex items-center justify-center gap-3 rounded-2xl bg-[#22C55E] p-6 text-sm font-black uppercase tracking-[0.2em] text-[#003915]"
-            >
-              <span className="material-symbols-outlined">bolt</span>
-              Go Live Now
-            </Link>
+            {isAuthenticated ? (
+              <button
+                onClick={() => { logout(); setIsMenuOpen(false); }}
+                className="mt-4 flex items-center justify-center gap-3 rounded-2xl border border-white/10 p-6 text-sm font-black uppercase tracking-[0.2em] text-white/70"
+              >
+                Logout {user?.email ? `(${user.email})` : ""}
+              </button>
+            ) : (
+              <div className="mt-4 grid grid-cols-2 gap-3">
+                <Link href="/login" onClick={() => setIsMenuOpen(false)} className="rounded-2xl border border-white/10 p-5 text-center text-sm font-black uppercase tracking-[0.2em] text-white/70">Login</Link>
+                <Link href="/register" onClick={() => setIsMenuOpen(false)} className="rounded-2xl bg-[#22C55E] p-5 text-center text-sm font-black uppercase tracking-[0.2em] text-[#003915]">Register</Link>
+              </div>
+            )}
           </div>
         </div>
       )}
