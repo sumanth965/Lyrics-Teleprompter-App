@@ -2,6 +2,13 @@ const mongoose = require("mongoose");
 
 const settingsSchema = new mongoose.Schema(
   {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+      unique: true,
+      index: true,
+    },
     scrollSpeed: {
       type: Number,
       default: 1,

@@ -10,8 +10,11 @@ const {
   autoSync,
 } = require("../controllers/songController");
 const audioUpload = require("../middleware/audioUpload");
+const { protect } = require("../middleware/authMiddleware");
 
 const router = express.Router();
+
+router.use(protect);
 
 router.route("/").get(getSongs).post(createSong);
 router.route("/:id").get(getSongById).put(updateSong).delete(deleteSong);

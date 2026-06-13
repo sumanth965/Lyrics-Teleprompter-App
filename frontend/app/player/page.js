@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import PlayerContent from "../../components/PlayerContent";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function PlayerPage() {
   return (
@@ -11,7 +12,9 @@ export default function PlayerPage() {
         </div>
       </main>
     }>
-      <PlayerContent />
+      <ProtectedRoute>
+        <PlayerContent />
+      </ProtectedRoute>
     </Suspense>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { parseLyrics } from "../utils/lyricParser";
+import { useAuth } from "../contexts/AuthContext";
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || "/api";
 
@@ -23,20 +24,29 @@ function mapSongFromApi(song) {
 }
 
 export default function useLocalStorageSongs() {
+  const { authFetch, isAuthLoaded, isAuthenticated } = useAuth();
   const [songs, setSongs] = useState([]);
   const [isLoaded, setIsLoaded] = useState(false);
 
   const fetchSongs = useCallback(async () => {
-    const response = await fetch(`${API_BASE}/songs`, { cache: "no-store" });
+    if (!isAuthLoaded) return;
+    if (!isAuthenticated) {
+      setSongs([]);
+      setIsLoaded(true);
+      return;
+    }
+
+    const response = await authFetch(`${API_BASE}/songs`, { cache: "no-store" });
     if (!response.ok) {
       throw new Error("Failed to load songs");
     }
 
     const data = await response.json();
     setSongs(data.map(mapSongFromApi));
-  }, []);
+  }, [authFetch, isAuthLoaded, isAuthenticated]);
 
   useEffect(() => {
+    setIsLoaded(false);
     (async () => {
       try {
         await fetchSongs();
@@ -59,7 +69,7 @@ export default function useLocalStorageSongs() {
     const endpoint = isUpdate ? `${API_BASE}/songs/${song.id}` : `${API_BASE}/songs`;
     const method = isUpdate ? "PUT" : "POST";
 
-    const response = await fetch(endpoint, {
+    const response = await authFetch(endpoint, {
       method,
       headers: {
         "Content-Type": "application/json",
@@ -74,21 +84,21 @@ export default function useLocalStorageSongs() {
     const savedData = await response.json();
     await fetchSongs();
     return savedData;
-  }, [fetchSongs]);
+  }, [fetchSongs, authFetch]);
 
   const deleteSong = useCallback(async (id) => {
-    const response = await fetch(`${API_BASE}/songs/${id}`, { method: "DELETE" });
+    const response = await authFetch(`${API_BASE}/songs/${id}`, { method: "DELETE" });
     if (!response.ok) {
       throw new Error("Unable to delete song");
     }
 
     await fetchSongs();
-  }, [fetchSongs]);
+  }, [fetchSongs, authFetch]);
 
   const uploadAudio = useCallback(async (id, file) => {
     const formData = new FormData();
     formData.append("audio", file);
-    const response = await fetch(`${API_BASE}/songs/${id}/audio`, {
+    const response = await authFetch(`${API_BASE}/songs/${id}/audio`, {
       method: "POST",
       body: formData,
     });
@@ -96,18 +106,18 @@ export default function useLocalStorageSongs() {
       throw new Error("Failed to upload audio");
     }
     await fetchSongs();
-  }, [fetchSongs]);
+  }, [fetchSongs, authFetch]);
 
   const removeAudio = useCallback(async (id) => {
-    const response = await fetch(`${API_BASE}/songs/${id}/audio`, { method: "DELETE" });
+    const response = await authFetch(`${API_BASE}/songs/${id}/audio`, { method: "DELETE" });
     if (!response.ok) {
       throw new Error("Failed to remove audio");
     }
     await fetchSongs();
-  }, [fetchSongs]);
+  }, [fetchSongs, authFetch]);
 
   const autoSync = useCallback(async (id) => {
-    const response = await fetch(`${API_BASE}/songs/${id}/auto-sync`, { method: "POST" });
+    const response = await authFetch(`${API_BASE}/songs/${id}/auto-sync`, { method: "POST" });
     
     if (!response.ok) {
       // Safely try to parse JSON, or fallback to status text
@@ -121,7 +131,7 @@ export default function useLocalStorageSongs() {
     }
     
     await fetchSongs();
-  }, [fetchSongs]);
+  }, [fetchSongs, authFetch]);
 
   return { songs, isLoaded, saveSong, deleteSong, uploadAudio, removeAudio, autoSync, refreshSongs: fetchSongs };
 

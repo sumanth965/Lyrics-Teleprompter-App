@@ -5,12 +5,12 @@ const catchAsync = require("../utils/catchAsync");
 const { OpenAI } = require("openai");
 
 const getSongs = catchAsync(async (req, res) => {
-  const songs = await Song.find().sort({ createdAt: -1 });
+  const songs = await Song.find({ user: req.user._id }).sort({ createdAt: -1 });
   res.json(songs);
 });
 
 const getSongById = catchAsync(async (req, res) => {
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
   if (!song) {
     return res.status(404).json({ message: "Song not found" });
   }
@@ -24,13 +24,13 @@ const createSong = catchAsync(async (req, res) => {
     return res.status(400).json({ message: "Title and artist are required" });
   }
 
-  const created = await Song.create({ title, artist, lyrics });
+  const created = await Song.create({ title, artist, lyrics, user: req.user._id });
   res.status(201).json(created);
 });
 
 const updateSong = catchAsync(async (req, res) => {
   const { title, artist, lyrics } = req.body;
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
 
   if (!song) {
     return res.status(404).json({ message: "Song not found" });
@@ -45,7 +45,7 @@ const updateSong = catchAsync(async (req, res) => {
 });
 
 const deleteSong = catchAsync(async (req, res) => {
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
 
   if (!song) {
     return res.status(404).json({ message: "Song not found" });
@@ -62,7 +62,7 @@ const deleteSong = catchAsync(async (req, res) => {
 });
 
 const uploadAudio = catchAsync(async (req, res) => {
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
   if (!song) {
     return res.status(404).json({ message: "Song not found" });
   }
@@ -87,7 +87,7 @@ const uploadAudio = catchAsync(async (req, res) => {
 });
 
 const deleteAudio = catchAsync(async (req, res) => {
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
   if (!song) {
     return res.status(404).json({ message: "Song not found" });
   }
@@ -105,7 +105,7 @@ const deleteAudio = catchAsync(async (req, res) => {
 const autoSync = catchAsync(async (req, res) => {
   console.log(`Starting AI Sync for song ID: ${req.params.id}`);
   
-  const song = await Song.findById(req.params.id);
+  const song = await Song.findOne({ _id: req.params.id, user: req.user._id });
   if (!song || !song.audioUrl) {
     return res.status(400).json({ message: "Song or audio file missing" });
   }
