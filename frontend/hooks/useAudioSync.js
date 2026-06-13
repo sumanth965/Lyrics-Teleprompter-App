@@ -15,6 +15,7 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
   const [audioError, setAudioError] = useState(false);
   
   const lastUiUpdateRef = useRef(0);
+  const playPromiseRef = useRef(null);
 
   // High-precision polling loop for active index
   useEffect(() => {
@@ -46,19 +47,36 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
   }, [isPlaying, lyrics, syncOffset]);
 
   const updatePlaybackState = useCallback(() => {
-
     const audio = audioRef.current;
     if (!audio) return;
 
     if (isPlaying) {
-      audio.play().catch(() => {
-        // blocked by browser gesture policy
+      const playPromise = audio.play();
+      playPromiseRef.current = playPromise;
+      playPromise.catch((error) => {
+        if (error.name !== "AbortError") {
+          console.warn("Playback prevented or aborted:", error);
+        }
       });
-      return;
+    } else {
+      const playPromise = playPromiseRef.current;
+      if (playPromise) {
+        playPromise
+          .then(() => {
+            if (!isPlaying && playPromiseRef.current === playPromise) {
+              audio.pause();
+              playPromiseRef.current = null;
+            }
+          })
+          .catch(() => {
+            playPromiseRef.current = null;
+          });
+      } else {
+        audio.pause();
+      }
     }
-
-    audio.pause();
   }, [isPlaying]);
+
 
   const handleTimeUpdate = useCallback((nextTime) => {
     // Only update if not polling (e.g. initial load or manual seek)
