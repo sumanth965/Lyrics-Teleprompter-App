@@ -5,6 +5,7 @@ import { useMemo, useState } from "react";
 import SongCard from "../../components/SongCard";
 import { useSongs } from "../../contexts/SongsContext";
 import Navbar from "../../components/Navbar";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function LibraryPage() {
   const { songs, isLoaded } = useSongs();
@@ -43,6 +44,7 @@ export default function LibraryPage() {
   }
 
   return (
+    <ProtectedRoute>
     <div className="min-h-screen bg-[#0a0a0a] text-[#f4f4f4] font-sans selection:bg-[#22C55E]/30 selection:text-[#22C55E]">
       {/* Premium Navbar */}
       <Navbar />
@@ -108,5 +110,6 @@ export default function LibraryPage() {
         </Link>
       </nav>
     </div>
+    </ProtectedRoute>
   );
 }

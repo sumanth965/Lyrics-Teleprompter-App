@@ -7,38 +7,46 @@ const defaultSettings = {
   theme: "dark",
   lineSpacing: 1.6,
   autoScroll: true,
+  syncOffset: 0,
 };
 
+const normalizeSettings = (settings) => ({
+  scrollSpeed: settings.scrollSpeed ?? defaultSettings.scrollSpeed,
+  fontSize: settings.fontSize ?? defaultSettings.fontSize,
+  theme: settings.theme ?? defaultSettings.theme,
+  lineSpacing: settings.lineSpacing ?? defaultSettings.lineSpacing,
+  autoScroll: settings.autoScroll ?? defaultSettings.autoScroll,
+  syncOffset: settings.syncOffset ?? defaultSettings.syncOffset,
+});
+
 const getSettings = catchAsync(async (req, res) => {
-  let settings = await Settings.findOne();
+  let settings = await Settings.findOne({ user: req.user._id });
 
   if (!settings) {
-    settings = await Settings.create(defaultSettings);
+    settings = await Settings.create({ ...defaultSettings, user: req.user._id });
   }
 
   res.json(settings);
 });
 
 const updateSettings = catchAsync(async (req, res) => {
-  const payload = req.body;
+  const updates = {};
+  Object.entries(req.body || {}).forEach(([key, value]) => {
+    if (value !== undefined && key in defaultSettings) updates[key] = value;
+  });
 
-  let settings = await Settings.findOne();
-  if (!settings) {
-    settings = new Settings(defaultSettings);
-  }
+  let settings = await Settings.findOne({ user: req.user._id });
+  if (!settings) settings = new Settings({ ...defaultSettings, user: req.user._id });
 
-  Object.entries(payload).forEach(([key, value]) => {
-    if (value !== undefined && key in defaultSettings) {
-      settings[key] = value;
-    }
+  Object.entries(updates).forEach(([key, value]) => {
+    settings[key] = value;
   });
 
   const saved = await settings.save();
-  res.json(saved);
+  res.json(normalizeSettings(saved));
 });
 
 module.exports = {
   getSettings,
   updateSettings,
 };
-

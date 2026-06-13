@@ -1,7 +1,12 @@
 "use client";
 
 import StudioScreen from "../../components/StudioScreen";
+import ProtectedRoute from "../../components/ProtectedRoute";
 
 export default function StudioPage() {
-  return <StudioScreen />;
+  return (
+    <ProtectedRoute>
+      <StudioScreen />
+    </ProtectedRoute>
+  );
 }

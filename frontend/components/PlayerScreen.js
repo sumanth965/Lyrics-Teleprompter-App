@@ -20,6 +20,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const [speed, setSpeed] = useState(settings.scrollSpeed);
   const [isPlaying, setIsPlaying] = useState(false);
   const [resetToken, setResetToken] = useState(0);
+  const [showSettings, setShowSettings] = useState(false);
 
 
   const {
@@ -126,8 +127,6 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   }
 
   const controlsDisabled = isAudioMissing || !isAudioReady || audioError;
-
-  const [showSettings, setShowSettings] = useState(false);
 
   return (
     <div className={`relative h-screen overflow-hidden ${settings.theme === "dark" ? "bg-black text-white" : "bg-white text-zinc-950"}`}>

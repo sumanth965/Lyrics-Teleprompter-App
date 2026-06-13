@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   description: "Performance lyrics teleprompter landing page and stage-ready player experience.",
 };
 
+import { AuthProvider } from "../contexts/AuthContext";
 import { SongsProvider } from "../contexts/SongsContext";
 import { SettingsProvider } from "../contexts/SettingsContext";
 
@@ -27,9 +28,11 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full bg-[#131313] text-[#e5e2e1]">
-        <SettingsProvider>
-          <SongsProvider>{children}</SongsProvider>
-        </SettingsProvider>
+        <AuthProvider>
+          <SettingsProvider>
+            <SongsProvider>{children}</SongsProvider>
+          </SettingsProvider>
+        </AuthProvider>
       </body>
     </html>
   );
