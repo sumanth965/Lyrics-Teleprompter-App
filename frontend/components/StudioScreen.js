@@ -2,17 +2,28 @@
 
 import { useState, useRef } from "react";
 import { useSongs } from "../contexts/SongsContext";
-import { parseLyrics } from "../utils/lyricParser";
+import { applyLyricOffset, formatLrcTime, parseLyrics, validateLrc } from "../utils/lyricParser";
+import { useToast } from "./ToastProvider";
 import Link from "next/link";
 import Navbar from "./Navbar";
 
 export default function StudioScreen() {
   const { songs, saveSong, deleteSong, uploadAudio, removeAudio, autoSync } = useSongs();
+  const { showToast } = useToast();
 
   const [editingId, setEditingId] = useState(null);
   const [title, setTitle] = useState("");
   const [artist, setArtist] = useState("");
   const [rawLyrics, setRawLyrics] = useState("");
+  const [notes, setNotes] = useState("");
+  const [songKey, setSongKey] = useState("");
+  const [bpm, setBpm] = useState("");
+  const [capo, setCapo] = useState("");
+  const [previewMode, setPreviewMode] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [timingAudio, setTimingAudio] = useState(null);
+  const [tapIndex, setTapIndex] = useState(0);
+  const [aiStatus, setAiStatus] = useState("");
 
   const fileInputRef = useRef(null);
   const audioInputRef = useRef(null);
@@ -26,6 +37,10 @@ export default function StudioScreen() {
     setArtist(song.artist);
     setRawLyrics(song.rawLyrics || song.lyrics.map((l) => `[${formatTime(l.time)}] ${l.text}`).join("\n"));
     setExistingAudio(song.audio);
+    setNotes(song.notes || "");
+    setSongKey(song.key || "");
+    setBpm(song.bpm || "");
+    setCapo(song.capo || "");
     setSelectedAudioFile(null);
   };
 
@@ -36,16 +51,42 @@ export default function StudioScreen() {
     setRawLyrics("");
     setExistingAudio(null);
     setSelectedAudioFile(null);
+    setNotes("");
+    setSongKey("");
+    setBpm("");
+    setCapo("");
+  };
+
+  const lrcValidation = validateLrc(rawLyrics);
+  const parsedPreview = parseLyrics(rawLyrics);
+
+  const applyOffset = () => {
+    setRawLyrics(applyLyricOffset(rawLyrics, offset));
+    showToast(`Applied ${offset}s bulk lyric offset.`);
+  };
+
+  const tapTimestamp = () => {
+    if (!timingAudio || !parsedPreview[tapIndex]) return;
+    const lines = rawLyrics.split(/\r?\n/);
+    let lyricCount = -1;
+    const next = lines.map((line) => {
+      if (!line.trim()) return line;
+      lyricCount += 1;
+      if (lyricCount !== tapIndex) return line;
+      return `[${formatLrcTime(timingAudio.currentTime)}] ${line.replace(/^\[\d+:\d+(?:\.\d+)?\]\s*/, "")}`;
+    });
+    setRawLyrics(next.join("\n"));
+    setTapIndex((value) => Math.min(value + 1, parsedPreview.length - 1));
   };
 
   const onSave = async () => {
     if (!title || !artist) {
-      alert("Title and Artist are required.");
+      showToast("Title and Artist are required.", "error");
       return;
     }
 
     if (!rawLyrics.trim() && !selectedAudioFile && !existingAudio) {
-      alert("At least one asset is required (Lyrics or Audio file).");
+      showToast("At least one asset is required (Lyrics or Audio file).", "error");
       return;
     }
 
@@ -56,6 +97,10 @@ export default function StudioScreen() {
         artist,
         rawLyrics,
         lyrics: rawLyrics.trim() ? parseLyrics(rawLyrics) : [],
+        notes,
+        key: songKey,
+        bpm: bpm ? Number(bpm) : null,
+        capo,
       });
 
       // Handle optional audio upload if a file was selected
@@ -75,9 +120,10 @@ export default function StudioScreen() {
       setRawLyrics("");
       setExistingAudio(null);
       setSelectedAudioFile(null);
+      showToast("Song saved.");
     } catch (error) {
       console.error(error);
-      alert("Save failed: " + error.message);
+      showToast("Save failed: " + error.message, "error");
     } finally {
       setUploadingId(null);
     }
@@ -90,6 +136,10 @@ export default function StudioScreen() {
     setRawLyrics("");
     setExistingAudio(null);
     setSelectedAudioFile(null);
+    setNotes("");
+    setSongKey("");
+    setBpm("");
+    setCapo("");
   };
 
   const onImportClick = () => {
@@ -117,6 +167,7 @@ export default function StudioScreen() {
       await uploadAudio(songId, file);
     } catch (err) {
       console.error(err);
+      showToast(err.message || "Audio upload failed", "error");
     } finally {
       setUploadingId(null);
     }
@@ -157,6 +208,12 @@ export default function StudioScreen() {
                 onChange={(e) => setArtist(e.target.value)}
                 className="w-full rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-4 outline-none focus:border-[#22C55E]"
               />
+            </div>
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
+              <input value={songKey} onChange={(e) => setSongKey(e.target.value)} placeholder="Key" className="rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-3 outline-none focus:border-[#22C55E]" />
+              <input value={bpm} onChange={(e) => setBpm(e.target.value)} placeholder="BPM" type="number" className="rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-3 outline-none focus:border-[#22C55E]" />
+              <input value={capo} onChange={(e) => setCapo(e.target.value)} placeholder="Capo" className="rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-3 outline-none focus:border-[#22C55E]" />
+              <input value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Song notes" className="rounded-xl border border-[#3d4a3d]/30 bg-[#131313] p-3 outline-none focus:border-[#22C55E]" />
             </div>
             <div className="space-y-4 rounded-2xl border border-[#3d4a3d]/20 bg-[#1a1a1a] p-6">
               <div className="flex items-center justify-between">
@@ -221,17 +278,19 @@ export default function StudioScreen() {
                     if (uploadingId) return;
                     setUploadingId(editingId);
                     try {
+                      setAiStatus("Sending audio to AI provider...");
                       await autoSync(editingId);
-                      alert("AI Sync complete! Lyrics updated.");
+                      showToast("AI Sync complete! Lyrics updated.");
                       // The context will update 'songs', but we should refresh our local rawLyrics
                       const updatedSong = songs.find(s => s.id === editingId);
                       if (updatedSong) {
                         setRawLyrics(updatedSong.rawLyrics);
                       }
                     } catch (err) {
-                      alert(err.message);
+                      showToast(err.message, "error");
                     } finally {
                       setUploadingId(null);
+                      setAiStatus("");
                     }
                   }}
                   disabled={uploadingId !== null}
@@ -241,6 +300,9 @@ export default function StudioScreen() {
                   <span className={`material-symbols-outlined ${uploadingId ? "animate-pulse" : ""}`}>auto_fix_high</span>
                   AI SYNC
                 </button>
+              )}
+              {aiStatus && (
+                <p className="text-xs font-bold uppercase tracking-wider text-[#22C55E]">{aiStatus}</p>
               )}
             </div>
           </div>
@@ -253,12 +315,25 @@ export default function StudioScreen() {
               </button>
               <input type="file" ref={fileInputRef} onChange={onFileChange} className="hidden" accept=".txt,.lrc" />
             </div>
-            <textarea
-              value={rawLyrics}
-              onChange={(e) => setRawLyrics(e.target.value)}
-              placeholder="[00:05.00] Line one\n[00:10.00] Line two..."
-              className="min-h-[400px] flex-1 resize-none rounded-xl border border-[#3d4a3d]/30 bg-[#0a0a0a] p-6 font-mono text-sm outline-none focus:border-[#22C55E]"
-            />
+            <div className="flex flex-wrap gap-2 rounded-xl border border-[#3d4a3d]/20 bg-[#1a1a1a] p-3 text-xs">
+              <button onClick={() => setPreviewMode(!previewMode)} className="rounded-lg bg-[#2a2a2a] px-3 py-2 font-bold text-[#22C55E]">{previewMode ? "EDIT" : "PREVIEW"}</button>
+              <input value={offset} onChange={(e) => setOffset(e.target.value)} type="number" step="0.05" className="w-24 rounded-lg bg-[#0a0a0a] px-3 py-2" />
+              <button onClick={applyOffset} className="rounded-lg bg-[#2a2a2a] px-3 py-2 font-bold">APPLY OFFSET</button>
+              <button onClick={tapTimestamp} className="rounded-lg bg-[#22C55E] px-3 py-2 font-black text-[#003915]">TAP TO TIMESTAMP LINE {tapIndex + 1}</button>
+              <audio controls src={existingAudio || undefined} onPlay={(e) => setTimingAudio(e.currentTarget)} onTimeUpdate={(e) => setTimingAudio(e.currentTarget)} className="h-8 max-w-full" />
+            </div>
+            {!lrcValidation.valid && <div className="rounded-xl border border-yellow-400/30 bg-yellow-950/40 p-3 text-xs text-yellow-100">{lrcValidation.issues.slice(0, 4).map((issue) => <div key={`${issue.line}-${issue.message}`}>Line {issue.line}: {issue.message}</div>)}</div>}
+            <div className="flex h-16 items-end gap-1 rounded-xl border border-[#3d4a3d]/20 bg-[#0a0a0a] p-3" aria-label="Waveform preview">{Array.from({ length: 64 }).map((_, index) => <span key={index} className="w-1 rounded bg-[#22C55E]/60" style={{ height: `${20 + ((index * 17) % 44)}px` }} />)}</div>
+            {previewMode ? (
+              <div className="min-h-[400px] flex-1 overflow-auto rounded-xl border border-[#3d4a3d]/30 bg-[#0a0a0a] p-6 font-mono text-sm">{parsedPreview.map((line, index) => <div key={`${line.time}-${index}`} className={index === tapIndex ? "text-[#22C55E]" : "text-[#e5e2e1]"}>[{formatLrcTime(line.time)}] {line.text}</div>)}</div>
+            ) : (
+              <textarea
+                value={rawLyrics}
+                onChange={(e) => setRawLyrics(e.target.value)}
+                placeholder="[00:05.00] Line one\n[00:10.00] Line two..."
+                className="min-h-[400px] flex-1 resize-none rounded-xl border border-[#3d4a3d]/30 bg-[#0a0a0a] p-6 font-mono text-sm outline-none focus:border-[#22C55E]"
+              />
+            )}
           </div>
           </div>
         </div>
@@ -336,7 +411,7 @@ export default function StudioScreen() {
               </label>
               {song.audio && (
                 <button
-                  onClick={() => removeAudio(song.id).catch(console.error)}
+                  onClick={() => { if (window.confirm(`Remove audio from ${song.title}?`)) removeAudio(song.id).then(() => showToast("Audio removed.")).catch((err) => showToast(err.message, "error")); }}
                   className="rounded-lg p-2 text-zinc-600 transition-colors hover:bg-red-500/10 hover:text-red-400"
                   title="Remove audio"
                 >
@@ -352,12 +427,14 @@ export default function StudioScreen() {
                     if (uploadingId) return;
                     setUploadingId(song.id);
                     try {
+                      setAiStatus(`Syncing ${song.title}...`);
                       await autoSync(song.id);
-                      alert("AI Sync complete!");
+                      showToast("AI Sync complete!");
                     } catch (err) {
-                      alert(err.message);
+                      showToast(err.message, "error");
                     } finally {
                       setUploadingId(null);
+                      setAiStatus("");
                     }
                   }}
                   disabled={uploadingId === song.id}
@@ -372,7 +449,7 @@ export default function StudioScreen() {
                 </button>
               )}
               <button
-                onClick={() => deleteSong(song.id).catch(console.error)}
+                onClick={() => { if (window.confirm(`Delete ${song.title}? This cannot be undone.`)) deleteSong(song.id).then(() => showToast("Song deleted.")).catch((err) => showToast(err.message, "error")); }}
                 className="p-2 text-red-500/40 transition-colors hover:text-red-500"
                 title="Delete song"
               >

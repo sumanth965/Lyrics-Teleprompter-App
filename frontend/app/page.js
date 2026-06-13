@@ -34,12 +34,12 @@ export default function HomePage() {
           </p>
 
           <div className="flex flex-col justify-center gap-4 pt-4 md:flex-row">
-            <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-10 py-5 text-lg font-extrabold text-[#003915] transition-all hover:shadow-2xl hover:shadow-[#4be277]/40 active:scale-95">
-              Start Singing
-            </button>
-            <button className="rounded-xl bg-[#353534] px-10 py-5 text-lg font-bold text-[#e5e2e1] transition-all hover:bg-[#393939]">
-              View Hardware Sync
-            </button>
+            <Link href="/studio" className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-10 py-5 text-lg font-extrabold text-[#003915] transition-all hover:shadow-2xl hover:shadow-[#4be277]/40 active:scale-95">
+              Open Studio
+            </Link>
+            <Link href="/library" className="rounded-xl bg-[#353534] px-10 py-5 text-lg font-bold text-[#e5e2e1] transition-all hover:bg-[#393939]">
+              View Library
+            </Link>
           </div>
         </div>
       </section>
@@ -137,9 +137,9 @@ export default function HomePage() {
             DOMINATE THE STAGE?
           </h2>
           <div className="flex flex-col items-center justify-center gap-6 md:flex-row">
-            <button className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-12 py-6 text-xl font-black text-[#003915] transition-all hover:shadow-[0_0_40px_rgba(34,197,94,0.3)]">
-              Start Singing
-            </button>
+            <Link href="/player" className="rounded-xl bg-gradient-to-br from-[#4be277] to-[#22c55e] px-12 py-6 text-xl font-black text-[#003915] transition-all hover:shadow-[0_0_40px_rgba(34,197,94,0.3)]">
+              Open Player
+            </Link>
             <p className="font-medium text-[#bccbb9]/60">No credit card required. Free 30-day session trial.</p>
           </div>
           <div className="absolute -bottom-24 -left-24 h-96 w-96 rounded-full bg-[#4be277]/5 blur-[100px]" />

@@ -12,14 +12,15 @@ const storage = multer.diskStorage({
   filename: (req, file, cb) => {
     const songId = req.params.id;
     const ext = path.extname(file.originalname).toLowerCase();
-    cb(null, `${songId}${ext}`);
+    const unique = `${Date.now()}-${Math.random().toString(36).slice(2, 10)}`;
+    cb(null, `${songId}-${unique}${ext}`);
   },
 });
 
 const fileFilter = (_req, file, cb) => {
-  const allowed = [".mp3", ".wav", ".ogg", ".m4a", ".flac", ".aac"];
+  const allowed = new Map([[".mp3", "audio/mpeg"], [".wav", "audio/wav"], [".ogg", "audio/ogg"], [".m4a", "audio/mp4"], [".flac", "audio/flac"], [".aac", "audio/aac"]]);
   const ext = path.extname(file.originalname).toLowerCase();
-  if (allowed.includes(ext)) {
+  if (allowed.has(ext) && file.mimetype.startsWith("audio/")) {
     cb(null, true);
   } else {
     cb(new Error(`Unsupported audio format: ${ext}`), false);
