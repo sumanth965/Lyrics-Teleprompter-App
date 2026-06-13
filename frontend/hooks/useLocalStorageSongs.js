@@ -19,7 +19,16 @@ function mapSongFromApi(song) {
     artist: song.artist,
     rawLyrics: song.lyrics,
     lyrics: parseLyrics(song.lyrics),
-    audio: song.audioUrl ? `${BACKEND_BASE}${song.audioUrl}` : null,
+    audio: song.audioUrl ? (song.audioUrl.startsWith("http") ? song.audioUrl : `${BACKEND_BASE}${song.audioUrl}`) : null,
+    audioMetadata: song.audioMetadata || null,
+    createdAt: song.createdAt,
+    notes: song.notes || "",
+    key: song.key || "",
+    bpm: song.bpm || "",
+    capo: song.capo || "",
+    chords: song.chords || "",
+    arrangement: song.arrangement || "",
+    displaySettings: song.displaySettings || {},
   };
 }
 
@@ -63,6 +72,13 @@ export default function useLocalStorageSongs() {
       title: song.title,
       artist: song.artist,
       lyrics: song.rawLyrics || "",
+      notes: song.notes || "",
+      key: song.key || "",
+      bpm: song.bpm || null,
+      capo: song.capo || "",
+      chords: song.chords || "",
+      arrangement: song.arrangement || "",
+      displaySettings: song.displaySettings || {},
     };
 
     const isUpdate = Boolean(song.id);
@@ -98,6 +114,7 @@ export default function useLocalStorageSongs() {
   const uploadAudio = useCallback(async (id, file) => {
     const formData = new FormData();
     formData.append("audio", file);
+    if (file.duration) formData.append("duration", String(file.duration));
     const response = await authFetch(`${API_BASE}/songs/${id}/audio`, {
       method: "POST",
       body: formData,

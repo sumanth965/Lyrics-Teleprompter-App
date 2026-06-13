@@ -21,6 +21,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [resetToken, setResetToken] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
+  const [showShortcuts, setShowShortcuts] = useState(false);
 
 
   const {
@@ -107,11 +108,29 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
       return;
     }
 
+    if (event.key === "?") {
+      event.preventDefault();
+      setShowShortcuts((value) => !value);
+      return;
+    }
+
+    if (event.code === "ArrowRight") {
+      event.preventDefault();
+      seekTo(currentTime + 5);
+      return;
+    }
+
+    if (event.code === "ArrowLeft") {
+      event.preventDefault();
+      seekTo(Math.max(0, currentTime - 5));
+      return;
+    }
+
     if (event.code === "ArrowDown") {
       event.preventDefault();
       onSpeedChange(Math.max(0.5, Number((speed - 0.1).toFixed(1))));
     }
-  }, [onPlayPause, onSpeedChange, speed]);
+  }, [currentTime, onPlayPause, onSpeedChange, seekTo, speed]);
 
   useEffect(() => {
     window.addEventListener("keydown", onKeyDown);
@@ -129,7 +148,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const controlsDisabled = isAudioMissing || !isAudioReady || audioError;
 
   return (
-    <div className={`relative h-screen overflow-hidden ${settings.theme === "dark" ? "bg-black text-white" : "bg-white text-zinc-950"}`}>
+    <div className={`relative h-screen overflow-hidden ${settings.theme === "high-contrast" ? "bg-black text-yellow-100" : settings.theme === "dark" ? "bg-black text-white" : "bg-white text-zinc-950"}`}>
       {/* Hidden Audio Element for Logic */}
       <audio
         ref={audioRef}
@@ -165,6 +184,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
             <p className="truncate text-xs text-zinc-400 md:text-sm">{selectedSong.artist}</p>
           </div>
 
+          <button onClick={() => setShowShortcuts(!showShortcuts)} className="rounded-full bg-zinc-800/80 px-3 py-2 text-xs font-black text-white hover:bg-zinc-700">?</button>
           <button
             onClick={() => setShowSettings(!showSettings)}
             className={`rounded-full p-2 transition ${showSettings ? "bg-green-500 text-black" : "bg-zinc-800/80 text-white hover:bg-zinc-700"}`}
@@ -191,6 +211,19 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
           ))}
         </div>
       </header>
+
+      {showShortcuts && (
+        <div className="absolute right-4 top-36 z-50 rounded-2xl border border-[#22C55E]/30 bg-black/95 p-5 text-sm text-white shadow-2xl md:right-8">
+          <h2 className="mb-3 font-black uppercase text-[#22C55E]">Keyboard / Controller Help</h2>
+          <ul className="space-y-2 text-zinc-300">
+            <li><strong>Space</strong> Play / pause</li>
+            <li><strong>↑ / ↓</strong> Adjust scroll speed</li>
+            <li><strong>← / →</strong> Seek 5 seconds</li>
+            <li><strong>?</strong> Toggle this help</li>
+            <li><strong>Bluetooth foot pedals</strong> mapped to Space or arrows work automatically.</li>
+          </ul>
+        </div>
+      )}
 
       {/* Settings Overlay */}
       {showSettings && (
@@ -273,10 +306,10 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
               <div className="flex gap-3">
 
                 <button
-                  onClick={() => updateSettings({ theme: settings.theme === "dark" ? "light" : "dark" }).catch(console.error)}
+                  onClick={() => updateSettings({ theme: settings.theme === "dark" ? "light" : settings.theme === "light" ? "high-contrast" : "dark" }).catch(console.error)}
                   className="flex-1 rounded-xl border border-zinc-700 py-3 text-sm font-medium transition hover:bg-zinc-800"
                 >
-                  {settings.theme === "dark" ? "🌙 Dark" : "☀️ Light"}
+                  {settings.theme === "high-contrast" ? "⚡ High Contrast" : settings.theme === "dark" ? "🌙 Dark" : "☀️ Light"}
                 </button>
                 <button
                   onClick={() => updateSettings({ autoScroll: !settings.autoScroll }).catch(console.error)}
