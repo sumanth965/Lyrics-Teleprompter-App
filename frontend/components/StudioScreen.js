@@ -30,6 +30,7 @@ export default function StudioScreen() {
   const [uploadingId, setUploadingId] = useState(null);
   const [selectedAudioFile, setSelectedAudioFile] = useState(null);
   const [existingAudio, setExistingAudio] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
 
   const onEdit = (song) => {
     setEditingId(song.id);
@@ -90,6 +91,7 @@ export default function StudioScreen() {
       return;
     }
 
+    setIsSaving(true);
     try {
       const savedSong = await saveSong({
         id: editingId,
@@ -126,6 +128,7 @@ export default function StudioScreen() {
       showToast("Save failed: " + error.message, "error");
     } finally {
       setUploadingId(null);
+      setIsSaving(false);
     }
   };
 
@@ -248,7 +251,15 @@ export default function StudioScreen() {
                 <input 
                   type="file" 
                   ref={audioInputRef} 
-                  onChange={(e) => setSelectedAudioFile(e.target.files[0])} 
+                  onChange={(e) => {
+                    const file = e.target.files[0];
+                    if (file) {
+                      setSelectedAudioFile(file);
+                      if (!title || title === "New Song") {
+                        setTitle(file.name.replace(/\.[^/.]+$/, ""));
+                      }
+                    }
+                  }} 
                   className="hidden" 
                   accept="audio/*" 
                 />
@@ -259,13 +270,13 @@ export default function StudioScreen() {
             <div className="flex gap-4 pt-6">
               <button 
                 onClick={onSave} 
-                disabled={uploadingId !== null}
+                disabled={uploadingId !== null || isSaving}
                 className="flex flex-1 items-center justify-center gap-3 rounded-xl bg-[#22C55E] py-4 font-black text-[#003915] transition-transform active:scale-95 disabled:opacity-50"
               >
-                {uploadingId ? (
+                {uploadingId || isSaving ? (
                   <>
                     <span className="animate-spin material-symbols-outlined">sync</span>
-                    UPLOADING...
+                    {uploadingId ? "UPLOADING..." : "SAVING..."}
                   </>
                 ) : (
                   "SAVE ASSET"
