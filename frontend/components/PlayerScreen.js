@@ -6,13 +6,13 @@ import { useSongs } from "../contexts/SongsContext";
 import { useSettings } from "../contexts/SettingsContext";
 import useScroll from "../hooks/useScroll";
 import useAudioSync from "../hooks/useAudioSync";
+import useLiveLyricTracking from "../hooks/useLiveLyricTracking";
 import LyricsDisplay from "./LyricsDisplay";
 import Controls from "./Controls";
-import AudioPlayer from "./AudioPlayer";
 
 export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const { songs, uploadAudio, removeAudio } = useSongs();
-  const { settings, updateSettings, isSettingsLoaded } = useSettings();
+  const { settings, updateSettings } = useSettings();
   const selectedSong = useMemo(() => songs.find((song) => song.id === songId) ?? null, [songId, songs]);
   const lyrics = selectedSong?.lyrics ?? [];
   const audioSrc = selectedSong?.audio;
@@ -22,6 +22,8 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   const [resetToken, setResetToken] = useState(0);
   const [showSettings, setShowSettings] = useState(false);
   const [showShortcuts, setShowShortcuts] = useState(false);
+  const [playerMode, setPlayerMode] = useState("timed");
+  const [liveSensitivity, setLiveSensitivity] = useState(0.65);
 
 
   const {
@@ -51,6 +53,10 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
     speed,
   });
 
+  const liveTracking = useLiveLyricTracking({ song: selectedSong, lyrics, sensitivity: liveSensitivity, enabled: playerMode === "live" });
+  const isLiveMode = playerMode === "live";
+  const displayActiveIndex = isLiveMode && liveTracking.lineIndex >= 0 ? liveTracking.lineIndex : activeIndex;
+
   const isAudioMissing = !audioSrc;
 
   const onAudioUpload = useCallback(async (file) => {
@@ -72,9 +78,9 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   }, [selectedSong, removeAudio]);
 
   const onPlayPause = useCallback(() => {
-    if (isAudioMissing || !isAudioReady || audioError) return;
+    if (isLiveMode || isAudioMissing || !isAudioReady || audioError) return;
     setIsPlaying((prev) => !prev);
-  }, [audioError, isAudioMissing, isAudioReady]);
+  }, [audioError, isAudioMissing, isAudioReady, isLiveMode]);
 
   const onRestart = useCallback(() => {
     setIsPlaying(false);
@@ -145,7 +151,7 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
     );
   }
 
-  const controlsDisabled = isAudioMissing || !isAudioReady || audioError;
+  const controlsDisabled = isLiveMode || isAudioMissing || !isAudioReady || audioError;
 
   return (
     <div className={`relative h-screen overflow-hidden ${settings.theme === "high-contrast" ? "bg-black text-yellow-100" : settings.theme === "dark" ? "bg-black text-white" : "bg-white text-zinc-950"}`}>
@@ -319,6 +325,32 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
                 </button>
               </div>
 
+
+              <div className="pt-4 border-t border-zinc-800">
+                <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Live AI Follow</h3>
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <button onClick={() => setPlayerMode("timed")} className={`rounded-xl border py-2 font-bold transition ${!isLiveMode ? "border-green-500/50 bg-green-500/10 text-green-400" : "border-zinc-700 text-zinc-400 hover:bg-zinc-800"}`}>Timed Audio</button>
+                  <button onClick={() => setPlayerMode("live")} className={`rounded-xl border py-2 font-bold transition ${isLiveMode ? "border-green-500/50 bg-green-500/10 text-green-400" : "border-zinc-700 text-zinc-400 hover:bg-zinc-800"}`}>Live AI</button>
+                </div>
+                <div className="mt-3 space-y-2 rounded-xl bg-zinc-800/40 p-3 text-xs text-zinc-300">
+                  <div className="flex justify-between"><span>Status</span><span className="font-mono text-green-400">{liveTracking.trackingStatus}</span></div>
+                  <div className="flex justify-between"><span>Mic</span><span>{liveTracking.microphoneStatus}</span></div>
+                  <div className="flex justify-between"><span>Confidence</span><span>{Math.round((liveTracking.confidence || 0) * 100)}%</span></div>
+                  <div className="flex justify-between"><span>Latency</span><span>{liveTracking.latency || 0}ms</span></div>
+                  {liveTracking.error && <p className="text-red-300">{liveTracking.error}</p>}
+                  {liveTracking.confidence > 0 && liveTracking.confidence < 0.45 && <p className="text-amber-300">Low confidence — timed mode remains available.</p>}
+                  <div className="flex justify-between"><span>Sensitivity</span><span>{liveSensitivity.toFixed(2)}</span></div>
+                  <input type="range" min="0.25" max="0.95" step="0.05" value={liveSensitivity} onChange={(e) => setLiveSensitivity(Number(e.target.value))} className="w-full accent-green-500" />
+                  <div className="grid grid-cols-5 gap-1">
+                    <button onClick={liveTracking.start} disabled={!isLiveMode} className="rounded-lg bg-green-500/20 py-2 font-bold text-green-300 disabled:opacity-40">Start</button>
+                    <button onClick={liveTracking.pause} disabled={!isLiveMode} className="rounded-lg bg-zinc-700 py-2 disabled:opacity-40">Pause</button>
+                    <button onClick={liveTracking.resume} disabled={!isLiveMode} className="rounded-lg bg-zinc-700 py-2 disabled:opacity-40">Resume</button>
+                    <button onClick={liveTracking.reset} disabled={!isLiveMode} className="rounded-lg bg-zinc-700 py-2 disabled:opacity-40">Reset</button>
+                    <button onClick={liveTracking.stop} disabled={!isLiveMode} className="rounded-lg bg-red-500/20 py-2 text-red-300 disabled:opacity-40">Stop</button>
+                  </div>
+                </div>
+              </div>
+
               {/* Audio Management */}
               <div className="pt-4 border-t border-zinc-800">
                 <h3 className="text-xs font-bold uppercase tracking-widest text-zinc-500 mb-3">Audio Source</h3>
@@ -364,7 +396,9 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
         ) : (
           <LyricsDisplay
             lyrics={lyrics}
-            activeIndex={activeIndex}
+            activeIndex={displayActiveIndex}
+            activeWordIndex={isLiveMode ? liveTracking.wordIndex : -1}
+            wordHighlight={isLiveMode}
             onActiveLineChange={followElement}
             fontSize={settings.fontSize}
             lineSpacing={settings.lineSpacing}

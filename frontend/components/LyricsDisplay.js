@@ -1,8 +1,8 @@
 "use client";
 
-import { memo, useEffect, useRef } from "react";
+import { memo, useEffect, useMemo, useRef } from "react";
 
-function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48, lineSpacing = 1.6, darkMode = true }) {
+function LyricsDisplay({ lyrics, activeIndex, activeWordIndex = -1, wordHighlight = false, onActiveLineChange, fontSize = 48, lineSpacing = 1.6, darkMode = true }) {
   const lineRefs = useRef([]);
 
   useEffect(() => {
@@ -12,6 +12,8 @@ function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48,
       onActiveLineChange?.(activeLine);
     }
   }, [activeIndex, onActiveLineChange]);
+
+  const renderedLines = useMemo(() => lyrics.map((line) => ({ ...line, words: String(line.text || "").split(/(\s+)/) })), [lyrics]);
 
   if (!Array.isArray(lyrics) || lyrics.length === 0) {
     return (
@@ -24,7 +26,7 @@ function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48,
   return (
     <div className="scrolling-content mx-auto flex w-full max-w-4xl flex-col gap-8 px-6 py-[45vh] text-center">
 
-      {lyrics.map((line, index) => {
+      {renderedLines.map((line, index) => {
         const isMarker = line.isMarker;
         const isActive = index === activeIndex;
         
@@ -51,7 +53,20 @@ function LyricsDisplay({ lyrics, activeIndex, onActiveLineChange, fontSize = 48,
             }`}
 
           >
-            {line.text}
+            {wordHighlight && isActive && !isMarker
+              ? line.words.map((word, wordIndex) => {
+                const lyricWordIndex = line.words.slice(0, wordIndex + 1).filter((part) => part.trim()).length - 1;
+                const isActiveWord = word.trim() && lyricWordIndex === activeWordIndex;
+                return (
+                  <span
+                    key={`${word}-${wordIndex}`}
+                    className={isActiveWord ? "rounded-md bg-green-400 px-1 text-black shadow-lg shadow-green-400/20" : undefined}
+                  >
+                    {word}
+                  </span>
+                );
+              })
+              : line.text}
           </p>
         );
       })}
