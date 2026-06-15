@@ -1,4 +1,5 @@
 const express = require("express");
+const http = require("http");
 const path = require("path");
 const cors = require("cors");
 const dotenv = require("dotenv");
@@ -7,6 +8,7 @@ const songRoutes = require("./routes/songRoutes");
 const settingsRoutes = require("./routes/settingsRoutes");
 const authRoutes = require("./routes/authRoutes");
 const mongoose = require("mongoose");
+const { attachLiveWebSocketServer } = require("./live/websocketServer");
 
 dotenv.config();
 
@@ -87,7 +89,10 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, "0.0.0.0", () => {
+const server = http.createServer(app);
+attachLiveWebSocketServer(server);
+
+server.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on port ${PORT}`);
   if (!process.env.MONGO_URI) {
     console.warn("WARNING: MONGO_URI is not defined. Database features will be unavailable.");
