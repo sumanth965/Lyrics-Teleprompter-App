@@ -48,13 +48,15 @@ export default function PlayerScreen({ songId, routeBase = "/player" }) {
   });
 
 
+  const liveTracking = useLiveLyricTracking({ song: selectedSong, lyrics, sensitivity: liveSensitivity, enabled: playerMode === "live" });
+  const isLiveMode = playerMode === "live";
+  const isLiveActive = isLiveMode && liveTracking.trackingStatus === "tracking";
+
   const { containerRef, followElement, restartScroll } = useScroll({
-    isPlaying: settings.autoScroll && isPlaying,
+    isPlaying: settings.autoScroll && (isPlaying || isLiveActive),
     speed,
   });
 
-  const liveTracking = useLiveLyricTracking({ song: selectedSong, lyrics, sensitivity: liveSensitivity, enabled: playerMode === "live" });
-  const isLiveMode = playerMode === "live";
   const displayActiveIndex = isLiveMode && liveTracking.lineIndex >= 0 ? liveTracking.lineIndex : activeIndex;
 
   const isAudioMissing = !audioSrc;

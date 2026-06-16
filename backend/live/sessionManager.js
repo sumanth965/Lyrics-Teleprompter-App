@@ -3,10 +3,10 @@ const { preprocessLyrics } = require("./lyricPreprocessor");
 
 class LiveSessionManager {
   constructor(engine) { this.engine = engine; this.sessions = new Map(); }
-  start({ songId, lyrics, language = "auto", sensitivity = 0.65, userId = null }, onPositionUpdate) {
+  async start({ songId, lyrics, language = "auto", sensitivity = 0.65, userId = null }, onPositionUpdate) {
     const sessionId = crypto.randomUUID();
     const lyricMeta = preprocessLyrics(lyrics || []);
-    const engineInfo = this.engine.startSession(sessionId, lyricMeta, { language, sensitivity }, onPositionUpdate);
+    const engineInfo = await this.engine.startSession(sessionId, lyricMeta, { language, sensitivity }, onPositionUpdate);
     const session = { sessionId, songId, userId, language, sensitivity, startedAt: Date.now(), lyricMeta, ...engineInfo };
     this.sessions.set(sessionId, session);
     return session;

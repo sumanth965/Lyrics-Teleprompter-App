@@ -69,13 +69,26 @@ export default function useLiveLyricTracking({ song, lyrics, sensitivity = 0.65,
       } else if (message.type === "session:error") {
         setState((prev) => ({ ...prev, error: message.message || "Live tracking error.", trackingStatus: "error" }));
       } else if (message.type === "session:ready") {
+        sessionReadyRef.current = true;
         setState((prev) => ({ ...prev, engineStatus: "ready", trackingStatus: "tracking" }));
+        
+        // Flush any buffered chunks
+        if (socket.readyState === WebSocket.OPEN) {
+          chunkBufferRef.current.forEach(chunk => socket.send(chunk));
+        }
+        chunkBufferRef.current = [];
       }
     };
   }), [enabled]);
 
+  const sessionReadyRef = useRef(false);
+  const chunkBufferRef = useRef([]);
+
   const start = useCallback(async () => {
     manuallyStoppedRef.current = false;
+    sessionReadyRef.current = false;
+    chunkBufferRef.current = [];
+
     const socket = await connect();
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
     streamRef.current = stream;
@@ -86,7 +99,12 @@ export default function useLiveLyricTracking({ song, lyrics, sensitivity = 0.65,
     recorder.ondataavailable = async (event) => {
       if (!event.data.size) return;
       const audio = await event.data.arrayBuffer();
-      if (socket.readyState === WebSocket.OPEN) socket.send(JSON.stringify({ type: "audio:chunk", audio: btoa(String.fromCharCode(...new Uint8Array(audio).slice(0, 12000))), timestamp: Date.now() }));
+      
+      if (sessionReadyRef.current) {
+        if (socket.readyState === WebSocket.OPEN) socket.send(audio);
+      } else {
+        chunkBufferRef.current.push(audio);
+      }
     };
     recorder.start(350);
   }, [connect, lyrics, sensitivity, song]);

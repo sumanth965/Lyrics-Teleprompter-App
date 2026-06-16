@@ -13,7 +13,7 @@ function attachLiveWebSocketServer(server) {
   wss.on("connection", (ws) => {
     let sessionId = null;
     send(ws, "engine:status", { status: "ready", engineName: "mock-rolling-transcript" });
-    ws.on("message", (data, isBinary) => {
+    ws.on("message", async (data, isBinary) => {
       const receivedAt = Date.now();
       if (isBinary) {
         if (!sessionId) return send(ws, "session:error", { message: "Start a live session before streaming audio." });
@@ -23,11 +23,16 @@ function attachLiveWebSocketServer(server) {
       let message;
       try { message = JSON.parse(data.toString()); } catch (_err) { return send(ws, "session:error", { message: "Invalid live tracking message." }); }
       if (message.type === "session:start") {
-        const session = manager.start(message, (update) => {
-          send(ws, "position:update", { ...update, latency: 50 }); // rough estimate latency
-        });
-        sessionId = session.sessionId;
-        return send(ws, "session:ready", { sessionId, engineName: session.engineName, engineVersion: session.engineVersion });
+        try {
+          const session = await manager.start(message, (update) => {
+            send(ws, "position:update", { ...update, latency: 50 }); // rough estimate latency
+          });
+          sessionId = session.sessionId;
+          return send(ws, "session:ready", { sessionId, engineName: session.engineName, engineVersion: session.engineVersion });
+        } catch (err) {
+          console.error("[Live] session:start error:", err);
+          return send(ws, "session:error", { message: err.message || "Failed to start live session." });
+        }
       }
       if (!sessionId) return send(ws, "session:error", { message: "No active live session." });
       if (message.type === "audio:chunk") {
