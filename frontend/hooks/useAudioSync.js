@@ -1,3 +1,6 @@
+
+
+
 "use client";
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
@@ -52,15 +55,17 @@ export default function useAudioSync({ lyrics, isPlaying, playbackRate, resetTok
 
     if (isPlaying) {
       const playPromise = audio.play();
-      playPromiseRef.current = playPromise;
-      playPromise.catch((error) => {
-        if (error.name !== "AbortError") {
-          console.warn("Playback prevented or aborted:", error);
-        }
-      });
+      if (playPromise !== undefined) {
+        playPromiseRef.current = playPromise;
+        playPromise.catch((error) => {
+          if (error.name !== "AbortError") {
+            console.warn("Playback prevented or aborted:", error);
+          }
+        });
+      }
     } else {
       const playPromise = playPromiseRef.current;
-      if (playPromise) {
+      if (playPromise !== undefined && playPromise !== null) {
         playPromise
           .then(() => {
             if (!isPlaying && playPromiseRef.current === playPromise) {
