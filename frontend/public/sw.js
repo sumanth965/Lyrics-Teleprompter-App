@@ -12,10 +12,22 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
+
+  if (request.url.includes("/api/")) {
+    event.respondWith(
+      fetch(request).then((response) => {
+        const copy = response.clone();
+        caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+        return response;
+      }).catch(() => caches.match(request))
+    );
+    return;
+  }
+
   event.respondWith(
     caches.match(request).then((cached) => cached || fetch(request).then((response) => {
       const copy = response.clone();
-      if (request.url.includes("/uploads/") || request.url.includes("/api/settings") || request.url.includes("/api/songs")) {
+      if (request.url.includes("/uploads/")) {
         caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
       }
       return response;

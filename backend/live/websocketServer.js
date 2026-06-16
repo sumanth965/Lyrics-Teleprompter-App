@@ -17,21 +17,21 @@ function attachLiveWebSocketServer(server) {
       const receivedAt = Date.now();
       if (isBinary) {
         if (!sessionId) return send(ws, "session:error", { message: "Start a live session before streaming audio." });
-        const update = manager.processAudioChunk(sessionId, { audio: data, timestamp: receivedAt });
-        if (update) send(ws, "position:update", { ...update, latency: Date.now() - receivedAt });
+        manager.processAudioChunk(sessionId, { audio: data, timestamp: receivedAt });
         return;
       }
       let message;
       try { message = JSON.parse(data.toString()); } catch (_err) { return send(ws, "session:error", { message: "Invalid live tracking message." }); }
       if (message.type === "session:start") {
-        const session = manager.start(message);
+        const session = manager.start(message, (update) => {
+          send(ws, "position:update", { ...update, latency: 50 }); // rough estimate latency
+        });
         sessionId = session.sessionId;
         return send(ws, "session:ready", { sessionId, engineName: session.engineName, engineVersion: session.engineVersion });
       }
       if (!sessionId) return send(ws, "session:error", { message: "No active live session." });
       if (message.type === "audio:chunk") {
-        const update = manager.processAudioChunk(sessionId, message);
-        if (update) send(ws, "position:update", { ...update, latency: Date.now() - (message.timestamp || receivedAt) });
+        manager.processAudioChunk(sessionId, message);
       } else if (message.type === "session:pause") { manager.pause(sessionId); send(ws, "engine:status", { status: "paused" }); }
       else if (message.type === "session:resume") { manager.resume(sessionId); send(ws, "engine:status", { status: "ready" }); }
       else if (message.type === "session:reset") { manager.reset(sessionId); send(ws, "position:update", { lineIndex: 0, wordIndex: 0, confidence: 0, latency: 0, trackingStatus: "reset" }); }
